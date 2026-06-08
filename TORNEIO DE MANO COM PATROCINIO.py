@@ -159,7 +159,7 @@ for chave, valor in valores_padrao.items():
 if os.path.exists(ARQUIVO_BACKUP):
     carregar_estado_do_disco()
 
-# --- ESTILIZAÇÃO CSS ---
+# --- ESTILIZAÇÃO CSS DE ALTO CONTRASTE ---
 st.markdown("""
     <style>
     .stApp { background-color: #1b4d3e; }
@@ -168,9 +168,35 @@ st.markdown("""
         background-color: #d4af37 !important; color: #111111 !important;
         font-weight: bold !important; border-radius: 8px !important; width: 100%;
     }
-    .card-mesa { background-color: #2c6b56; padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #d4af37; }
+    
+    /* 🌟 DESTAK NAS MESAS: Grafite Escuro com Borda Dourada Espessa e Sombra */
+    .card-mesa { 
+        background-color: #141f1b !important; 
+        padding: 20px; 
+        border-radius: 12px; 
+        margin-bottom: 20px; 
+        border: 2px solid #d4af37 !important; 
+        box-shadow: 0px 6px 15px rgba(0,0,0,0.5);
+    }
+    
+    .texto-confronto {
+        font-size: 1.15rem !important;
+        font-weight: bold !important;
+        color: #ffffff !important;
+    }
+    
     .card-historico { background-color: #14382d; padding: 10px; border-radius: 8px; margin-bottom: 10px; border-left: 5px solid #d4af37; }
-    .cronometro-box { background-color: #11221a; border: 2px solid #d4af37; padding: 12px; border-radius: 8px; text-align: center; font-family: 'Courier New', Courier, monospace; margin-bottom: 15px; }
+    
+    /* ⏱️ CAIXA DO CRONÔMETRO ESTILIZADA COM SUPORTE A LOGO INTERNO */
+    .cronometro-box { 
+        background-color: #11221a; 
+        border: 3px solid #d4af37; 
+        padding: 15px; 
+        border-radius: 12px; 
+        margin-bottom: 20px;
+        box-shadow: 0px 4px 12px rgba(0,0,0,0.4);
+    }
+    
     .box-campeao { background-color: #d4af37; padding: 25px; border-radius: 15px; text-align: center; color: #111111 !important; border: 3px solid #ffffff; margin-bottom: 15px; }
     .podio-posicao { padding: 15px; border-radius: 10px; text-align: center; font-weight: bold; margin-bottom: 10px; color: #ffffff !important; }
     .podio-vice { background-color: #a0a0a0; border: 2px solid #d1d1d1; }
@@ -390,20 +416,34 @@ if not st.session_state.torneio_iniciado:
 else:
     st.markdown(f"### 🏟️ {st.session_state.nome_torneio}")
     
-    # ⏱️ BLOCÃO FIXO DO CRONÔMETRO NO TOPO DA TELA (Executa enquanto não houver um Campeão definido)
+    # ⏱️ BLOCÃO DO CRONÔMETRO COM O LOGO DO PATROCINADOR MASTER INJETADO
     if not st.session_state.campeao:
-        if st.session_state.cronometro_ativo and st.session_state.hora_inicio_rodada:
-            tempo_limite = st.session_state.hora_inicio_rodada + timedelta(minutes=45)
-            tempo_atual = datetime.now()
-            if tempo_atual < tempo_limite:
-                tempo_restante = tempo_limite - tempo_atual
-                minutos, segundos = int(tempo_restante.total_seconds() // 60), int(tempo_restante.total_seconds() % 60)
-                st.markdown(f'<div class="cronometro-box"><h3 style="margin:0; color:#d4af37 !important;">⏱️ TEMPO RESTANTE DA RODADA: {minutos:02d}:{segundos:02d}</h3></div>', unsafe_allow_html=True)
+        st.markdown('<div class="cronometro-box">', unsafe_allow_html=True)
+        col_crono_txt, col_crono_img = st.columns([3, 1])
+        
+        with col_crono_txt:
+            if st.session_state.cronometro_ativo and st.session_state.hora_inicio_rodada:
+                tempo_limite = st.session_state.hora_inicio_rodada + timedelta(minutes=45)
+                tempo_atual = datetime.now()
+                if tempo_atual < tempo_limite:
+                    tempo_restante = tempo_limite - tempo_atual
+                    minutos, segundos = int(tempo_restante.total_seconds() // 60), int(tempo_restante.total_seconds() % 60)
+                    st.markdown(f'<h2 style="margin:0; font-family:\'Courier New\', Courier, monospace; color:#d4af37 !important; font-weight:bold;">⏱️ TEMPO RESTANTE:<br>{minutos:02d}:{segundos:02d}</h2>', unsafe_allow_html=True)
+                else:
+                    st.markdown('<h2 style="margin:0; font-family:\'Courier New\', Courier, monospace; color:#ff4b4b !important; font-weight:bold;">⏰ TEMPO ESGOTADO!</h2>', unsafe_allow_html=True)
             else:
-                st.markdown('<div class="cronometro-box"><h3 style="margin:0; color:#ff4b4b !important;">⏰ TEMPO ESGOTADO NESTA RODADA!</h3></div>', unsafe_allow_html=True)
-            
-            # Controles exclusivos do Admin para ajustar o tempo
-            if is_admin:
+                st.markdown('<h2 style="margin:0; font-family:\'Courier New\', Courier, monospace; color:#a0a0a0 !important; font-weight:bold;">⏱️ CRONÔMETRO<br>PAUSADO</h2>', unsafe_allow_html=True)
+        
+        with col_crono_img:
+            if os.path.exists(PATROCINADORES["master"]["logo"]):
+                st.image(PATROCINADORES["master"]["logo"], use_container_width=True)
+                st.markdown('<p style="text-align:center; font-size:0.65rem; color:#d4af37; margin:0; font-weight:bold;">PARCEIRO MASTER</p>', unsafe_allow_html=True)
+                
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+        # Botões de controle de tempo exclusivos do Administrador (ficam logo abaixo da caixa do cronômetro)
+        if is_admin:
+            if st.session_state.cronometro_ativo and st.session_state.hora_inicio_rodada:
                 c_c1, c_c2 = st.columns(2)
                 with c_c1:
                     if st.button("⏹️ Resetar/Pausar Tempo"):
@@ -416,9 +456,7 @@ else:
                         st.session_state.hora_inicio_rodada += timedelta(minutes=5)
                         salvar_estado_no_disco()
                         st.rerun()
-        else:
-            st.markdown('<div class="cronometro-box"><h3 style="margin:0; color:#a0a0a0 !important;">⏱️ CRONÔMETRO PAUSADO / AGUARDANDO INÍCIO</h3></div>', unsafe_allow_html=True)
-            if is_admin:
+            else:
                 if st.button("▶️ DISPARAR CRONÔMETRO DE RODADA (45 MIN)"):
                     st.session_state.hora_inicio_rodada = datetime.now()
                     st.session_state.cronometro_ativo = True
@@ -461,6 +499,7 @@ else:
                     texto_mesa = "🏆 GRANDE FINAL" if st.session_state.fase_matamata == "FINAIS" and not confronto.get("tipo") == "bronze" else ("🥉 DISPUTA DO 3º LUGAR" if confronto.get("tipo") == "bronze" else f"Mesa {idx+1}")
                     patro_atual = PATROCINADORES["mesas"][idx % len(PATROCINADORES["mesas"])]
                     
+                    st.markdown('<div class="card-mesa">', unsafe_allow_html=True)
                     col_m_txt, col_m_img = st.columns([4, 1])
                     with col_m_txt:
                         st.markdown(f"### ⚔️ {texto_mesa}")
@@ -479,6 +518,8 @@ else:
                         s2 = st.number_input("Sets:", min_value=0, max_value=2, step=1, key=f"mm_s2_{idx}")
                         t2 = st.number_input("Tentos:", min_value=0, max_value=72, step=1, key=f"mm_t2_{idx}")
                         f2 = st.number_input("Flores:", min_value=0, max_value=20, step=1, key=f"mm_f2_{idx}")
+                    st.markdown('</div>', unsafe_allow_html=True)
+                    
                     resultados_fase.append({"j1": j1, "j2": j2, "s1": s1, "s2": s2, "t1": t1, "t2": t2, "f1": f1, "f2": f2, "is_bronze": confronto.get("tipo") == "bronze", "mesa": idx+1})
                 
                 if st.form_submit_button("💾 COMPUTAR RESULTADOS"):
@@ -527,13 +568,16 @@ else:
             for idx, c in enumerate(st.session_state.confrontos_mm):
                 lbl = "🏆 Grande Final" if c["tipo"] == "normal" and st.session_state.fase_matamata == "FINAIS" else ("Disputa de 3º Lugar" if c["tipo"] == "bronze" else f"Mesa {idx+1}")
                 patro_atual = PATROCINADORES["mesas"][idx % len(PATROCINADORES["mesas"])]
-                with st.container():
-                    col_p_txt, col_p_img = st.columns([4, 1])
-                    with col_p_txt:
-                        st.markdown(f"**{lbl}:** {c['j1']} ⚔️ {c['j2']}")
-                    with col_p_img:
-                        if os.path.exists(patro_atual["logo"]):
-                            st.image(patro_atual["logo"], width=40)
+                
+                st.markdown(f'<div class="card-mesa">', unsafe_allow_html=True)
+                col_p_txt, col_p_img = st.columns([4, 1])
+                with col_p_txt:
+                    st.markdown(f"### ⚔️ {lbl}")
+                    st.markdown(f'<p class="texto-confronto">{c["j1"]} &nbsp;&nbsp;✖&nbsp;&nbsp; {c["j2"]}</p>', unsafe_allow_html=True)
+                with col_p_img:
+                    if os.path.exists(patro_atual["logo"]):
+                        st.image(patro_atual["logo"], width=45)
+                st.markdown('</div>', unsafe_allow_html=True)
 
     # 📊 SE O TORNEIO ESTÁ NA FASE DE CLASSIFICATÓRIA POR PONTOS
     else:
@@ -549,6 +593,7 @@ else:
                         for idx, (j1, j2) in enumerate(st.session_state.confrontos):
                             patro_atual = PATROCINADORES["mesas"][idx % len(PATROCINADORES["mesas"])]
                             
+                            st.markdown('<div class="card-mesa">', unsafe_allow_html=True)
                             col_m_txt, col_m_img = st.columns([4, 1])
                             with col_m_txt:
                                 st.markdown(f"### 🎯 Mesa {idx+1}")
@@ -557,7 +602,7 @@ else:
                                     st.image(patro_atual["logo"], width=45)
                                     
                             if j2 == "CHAPÉU (Folga)":
-                                st.markdown(f"🤠 **{j1}** está no CHAPÉU")
+                                st.markdown(f"🤠 <span class='texto-confronto'><b>{j1}</b> está no CHAPÉU (Folga)</span>", unsafe_allow_html=True)
                                 placares.append(None)
                             else:
                                 c1, c2 = st.columns(2)
@@ -572,6 +617,7 @@ else:
                                     t2 = st.number_input("Tentos:", 0, 72, 0, key=f"t2_{idx}")
                                     f2 = st.number_input("Flores:", 0, 20, 0, key=f"f2_{idx}")
                                 placares.append((s1, s2, t1, t2, f1, f2))
+                            st.markdown('</div>', unsafe_allow_html=True)
                         
                         if st.form_submit_button("💾 COMPUTAR RODADA"):
                             sucesso_validacao = True
@@ -613,13 +659,19 @@ else:
                 else:
                     for idx, (j1, j2) in enumerate(st.session_state.confrontos):
                         patro_atual = PATROCINADORES["mesas"][idx % len(PATROCINADORES["mesas"])]
-                        with st.container():
-                            col_p_txt, col_p_img = st.columns([4, 1])
-                            with col_p_txt:
-                                st.markdown(f"**Mesa {idx+1}:** {j1} ⚔️ {j2}")
-                            with col_p_img:
-                                if os.path.exists(patro_atual["logo"]):
-                                    st.image(patro_atual["logo"], width=40)
+                        
+                        st.markdown('<div class="card-mesa">', unsafe_allow_html=True)
+                        col_p_txt, col_p_img = st.columns([4, 1])
+                        with col_p_txt:
+                            st.markdown(f"### 🎯 Mesa {idx+1}")
+                            if j2 == "CHAPÉU (Folga)":
+                                st.markdown(f"🤠 <span class='texto-confronto'><b>{j1}</b> está de Folga (CHAPÉU)</span>", unsafe_allow_html=True)
+                            else:
+                                st.markdown(f'<p class="texto-confronto">{j1} &nbsp;&nbsp;⚔&nbsp;&nbsp; {j2}</p>', unsafe_allow_html=True)
+                        with col_p_img:
+                            if os.path.exists(patro_atual["logo"]):
+                                st.image(patro_atual["logo"], width=45)
+                        st.markdown('</div>', unsafe_allow_html=True)
             else:
                 st.success("🎉 Classificatória Encerrada!")
                 if is_admin:
