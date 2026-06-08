@@ -21,20 +21,20 @@ ARQUIVO_GALERIA = "galeria_campeoes.json"
 CHAVE_ADMINISTRADOR = "truco123"
 
 # ==========================================
-# 🎯 BANCO DE DADOS DE PATROCINADORES (LOGOS REAIS)
+# 🎯 BANCO DE DADOS DE PATROCINADORES CORRIGIDO (PNG/JPG ESTÁVEIS)
 # ==========================================
-# Configuração de links de imagens compatíveis e seguros para exibição direta
 PATROCINADORES = {
     "master": {
         "nome": "Sicredi",
-        "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Sicredi_logo.svg/512px-Sicredi_logo.svg.png", 
+        # Link corrigido para um arquivo PNG estelar de alta resolução (sem bloqueio)
+        "logo": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Logo_Sicredi.png", 
     },
     "mesas": [
-        {"nome": "Sicredi", "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Sicredi_logo.svg/512px-Sicredi_logo.svg.png"},
-        {"nome": "Salgadinhos Torcida", "logo": "https://images.unilever.com/is/image/unilever/torcida_pimenta_80g_front_7891095013063?wid=150&fit=fit,1"},
-        {"nome": "Bet do Truco", "logo": "https://picsum.photos/id/1041/150/60?blur=1"}, # Exemplo simulado estável
-        {"nome": "Barbearia do Estilo", "logo": "https://picsum.photos/id/338/150/60?blur=1"},
-        {"nome": "Churrascaria Gaúcha", "logo": "https://picsum.photos/id/292/150/60?blur=1"}
+        {"nome": "Sicredi", "logo": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Logo_Sicredi.png"},
+        {"nome": "Coca-Cola", "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Coca-Cola_logo_PNG1.png/240px-Coca-Cola_logo_PNG1.png"},
+        {"nome": "Salgadinho", "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Pringles_New_Logo.svg/220px-Pringles_New_Logo.svg.png"}, 
+        {"nome": "Barbearia", "logo": "https://i.imgur.com/KdfGvQG.jpg"},
+        {"nome": "Churrascaria", "logo": "https://i.imgur.com/vHkaVIn.jpg"}
     ]
 }
 
@@ -165,7 +165,7 @@ st.markdown("""
         font-weight: bold !important; border-radius: 8px !important; width: 100%;
     }
     
-    /* Box Flexível para embutir logos nas mesas */
+    /* Box das Mesas Ajustada para Logos */
     .card-mesa { 
         background-color: #2c6b56; 
         padding: 12px 20px; 
@@ -182,13 +182,13 @@ st.markdown("""
         font-weight: bold;
     }
     .tag-patrocinio-img {
-        max-height: 35px;
-        max-width: 120px;
+        max-height: 32px;
+        max-width: 110px;
         width: auto;
         background-color: #ffffff;
         padding: 4px 8px;
         border-radius: 6px;
-        box-shadow: 0px 2px 5px rgba(0,0,0,0.3);
+        object-fit: contain;
     }
     
     .card-historico { background-color: #14382d; padding: 10px; border-radius: 8px; margin-bottom: 10px; border-left: 5px solid #d4af37; }
@@ -201,7 +201,7 @@ st.markdown("""
     .box-flores { background-color: #4a1525; padding: 15px; border-radius: 10px; text-align: center; color: #ffffff !important; border: 2px solid #ff4b4b; margin-top: 15px; margin-bottom: 20px; }
     .creditos { text-align: center; color: #a0c0b5 !important; font-size: 0.8rem; margin-top: 50px; }
     
-    /* Espaço Premium do Patrocinador Master */
+    /* Espaço Patrocinador Master Topo */
     .banner-master {
         background-color: #ffffff;
         padding: 15px;
@@ -209,11 +209,11 @@ st.markdown("""
         text-align: center;
         border: 3px solid #d4af37;
         margin-bottom: 25px;
-        box-shadow: 0px 4px 12px rgba(0,0,0,0.3);
     }
     .banner-master img {
-        max-height: 55px;
+        max-height: 48px;
         width: auto;
+        object-fit: contain;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -247,7 +247,6 @@ if is_admin:
     st.sidebar.markdown("**Compartilhar no WhatsApp:**")
     st.sidebar.code(url_torneio, language="text")
     
-    # Gerador de QR Code
     qr = qrcode.QRCode(version=1, box_size=10, border=4)
     qr.add_data(url_torneio)
     qr.make(fit=True)
@@ -259,11 +258,10 @@ else:
     st.sidebar.info("👁️ Modo Visualizador Público")
     st.sidebar.markdown("---")
     st.sidebar.markdown("### 🤝 Parceiro de Destaque")
-    # Banner quadrado lateral fixo para o público
     st.sidebar.markdown(f"""
         <div style="background-color: #ffffff; padding: 15px; border-radius: 8px; text-align: center; border: 2px solid #d4af37;">
             <p style="color: #1b4d3e !important; font-weight: bold; font-size:0.8rem; margin-bottom: 10px;">APOIO EXCLUSIVO</p>
-            <img src="{PATROCINADORES['master']['logo']}" style="max-width: 90%; height: auto;">
+            <img src="{PATROCINADORES['master']['logo']}" style="max-width: 90%; height: auto; max-height: 40px; object-fit: contain;">
             <p style="color: #444444 !important; font-size: 0.75rem; margin-top: 10px; margin-bottom:0;">Valorize quem apoia o esporte tradicionalista local!</p>
         </div>
     """, unsafe_allow_html=True)
@@ -335,7 +333,7 @@ def iniciar_fase_matamata(lista_jogadores, nome_fase):
 # --- CONTEÚDO PRINCIPAL ---
 st.title("🏆 Painel Interativo de Truco")
 
-# 🌟 ÁREA NOBRE SUPERIOR: BANNER MASTER OFICIAL DO SICREDI CORRIGIDO
+# 🌟 BANNER MASTER SUPERIOR CORRIGIDO COM IMAGEM PNG DIRETA
 st.markdown(f"""
     <div class="banner-master">
         <img src="{PATROCINADORES['master']['logo']}">
@@ -343,7 +341,6 @@ st.markdown(f"""
     </div>
 """, unsafe_allow_html=True)
 
-# Guia visual rápido na página inicial para o administrador conectar o pessoal
 if not st.session_state.torneio_iniciado and is_admin:
     st.info(f"📢 **COMO FAZER OS JOGADORES ENTRAREM PELO CELULAR AGORA:**\n\n"
             f"1. Ligue o **Ponto de Acesso/Roteador** do seu celular e conecte o seu notebook a ele.\n"
@@ -614,7 +611,7 @@ else:
                                     else: dados_ajustados.append((ns1, ns2, nt1, nt2, f1, f2))
                                 else: dados_ajustados.append(None)
                                         
-                            if Planetary_validation := sucesso_validacao:
+                            if sucesso_validacao:
                                 dados_hist = []
                                 for idx, c in enumerate(dados_ajustados):
                                     j1, j2 = st.session_state.confrontos[idx]
@@ -670,17 +667,17 @@ else:
                 st.session_state.clear()
                 st.rerun()
 
-# 🌟 PAINEL COMERCIAL PREMIUM DE RODAPÉ (BACKDROP DE MARCAS)
+# 🌟 PAINEL DE RODAPÉ ATUALIZADO (BACKDROP DE MARCAS COM LINKS EM ALTA DISPONIBILIDADE)
 st.markdown(f"""
     <div class="creditos">
         <hr style="border-color: #2c6b56; margin-bottom: 20px;">
         <p style='margin:0 0 15px 0; font-weight: bold;'>🌟 PARCEIROS OFICIAIS DO ESPORTE E DA TRADIÇÃO 🌟</p>
         <div style="display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap; background-color: #11221a; padding: 25px; border-radius: 12px; border: 1px solid #2c6b56;">
-            <div style="background: white; padding: 6px 12px; border-radius: 6px; display: flex; align-items: center; justify-content: center;"><img src="{PATROCINADORES['master']['logo']}" style="height: 30px; width: auto;"></div>
-            <div style="background: white; padding: 6px 12px; border-radius: 6px; display: flex; align-items: center; justify-content: center;"><img src="{PATROCINADORES['mesas'][1]['logo']}" style="height: 30px; width: auto;"></div>
-            <div style="background: white; padding: 6px 12px; border-radius: 6px; display: flex; align-items: center; justify-content: center;"><img src="{PATROCINADORES['mesas'][2]['logo']}" style="height: 30px; width: auto;"></div>
-            <div style="background: white; padding: 6px 12px; border-radius: 6px; display: flex; align-items: center; justify-content: center;"><img src="{PATROCINADORES['mesas'][3]['logo']}" style="height: 30px; width: auto;"></div>
-            <div style="background: white; padding: 6px 12px; border-radius: 6px; display: flex; align-items: center; justify-content: center;"><img src="{PATROCINADORES['mesas'][4]['logo']}" style="height: 30px; width: auto;"></div>
+            <div style="background: white; padding: 6px 12px; border-radius: 6px; display: flex; align-items: center; justify-content: center;"><img src="{PATROCINADORES['master']['logo']}" style="height: 25px; width: auto; object-fit: contain;"></div>
+            <div style="background: white; padding: 6px 12px; border-radius: 6px; display: flex; align-items: center; justify-content: center;"><img src="{PATROCINADORES['mesas'][1]['logo']}" style="height: 25px; width: auto; object-fit: contain;"></div>
+            <div style="background: white; padding: 6px 12px; border-radius: 6px; display: flex; align-items: center; justify-content: center;"><img src="{PATROCINADORES['mesas'][2]['logo']}" style="height: 25px; width: auto; object-fit: contain;"></div>
+            <div style="background: white; padding: 6px 12px; border-radius: 6px; display: flex; align-items: center; justify-content: center;"><img src="{PATROCINADORES['mesas'][3]['logo']}" style="height: 25px; width: auto; object-fit: contain;"></div>
+            <div style="background: white; padding: 6px 12px; border-radius: 6px; display: flex; align-items: center; justify-content: center;"><img src="{PATROCINADORES['mesas'][4]['logo']}" style="height: 25px; width: auto; object-fit: contain;"></div>
         </div>
         <p style="margin-top: 25px; font-size: 0.75rem;">💻 Criado por <b>{NOME_CRIADOR}</b> | Todos os direitos reservados © 2026</p>
     </div>
