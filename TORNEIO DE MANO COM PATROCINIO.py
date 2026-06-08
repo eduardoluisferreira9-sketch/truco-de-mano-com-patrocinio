@@ -21,18 +21,17 @@ ARQUIVO_GALERIA = "galeria_campeoes.json"
 CHAVE_ADMINISTRADOR = "truco123"
 
 # ==========================================
-# 🎯 BANCO DE DADOS DE PATROCINADORES CORRIGIDO (PNG/JPG ESTÁVEIS)
+# 🎯 BANCO DE DADOS DE PATROCINADORES (LINKS NATIVOS DE ALTA ESTABILIDADE)
 # ==========================================
 PATROCINADORES = {
     "master": {
         "nome": "Sicredi",
-        # Link corrigido para um arquivo PNG estelar de alta resolução (sem bloqueio)
         "logo": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Logo_Sicredi.png", 
     },
     "mesas": [
         {"nome": "Sicredi", "logo": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Logo_Sicredi.png"},
         {"nome": "Coca-Cola", "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Coca-Cola_logo_PNG1.png/240px-Coca-Cola_logo_PNG1.png"},
-        {"nome": "Salgadinho", "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Pringles_New_Logo.svg/220px-Pringles_New_Logo.svg.png"}, 
+        {"nome": "Pringles", "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Pringles_New_Logo.svg/220px-Pringles_New_Logo.svg.png"}, 
         {"nome": "Barbearia", "logo": "https://i.imgur.com/KdfGvQG.jpg"},
         {"nome": "Churrascaria", "logo": "https://i.imgur.com/vHkaVIn.jpg"}
     ]
@@ -155,7 +154,7 @@ for chave, valor in valores_padrao.items():
 if os.path.exists(ARQUIVO_BACKUP):
     carregar_estado_do_disco()
 
-# --- ESTILIZAÇÃO CSS ATUALIZADA ---
+# --- ESTILIZAÇÃO CSS DESIGN ---
 st.markdown("""
     <style>
     .stApp { background-color: #1b4d3e; }
@@ -165,30 +164,17 @@ st.markdown("""
         font-weight: bold !important; border-radius: 8px !important; width: 100%;
     }
     
-    /* Box das Mesas Ajustada para Logos */
-    .card-mesa { 
+    /* Box Limpo para as Mesas */
+    .card-mesa-clean { 
         background-color: #2c6b56; 
-        padding: 12px 20px; 
+        padding: 14px; 
         border-radius: 10px; 
-        margin-bottom: 15px; 
         border: 1px solid #d4af37;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        min-height: 65px;
+        margin-bottom: 5px;
     }
     .texto-mesa-box {
-        font-size: 1.15rem;
+        font-size: 1.2rem;
         font-weight: bold;
-    }
-    .tag-patrocinio-img {
-        max-height: 32px;
-        max-width: 110px;
-        width: auto;
-        background-color: #ffffff;
-        padding: 4px 8px;
-        border-radius: 6px;
-        object-fit: contain;
     }
     
     .card-historico { background-color: #14382d; padding: 10px; border-radius: 8px; margin-bottom: 10px; border-left: 5px solid #d4af37; }
@@ -200,21 +186,6 @@ st.markdown("""
     .podio-quarto { background-color: #2c6b56; border: 2px solid #d4af37; }
     .box-flores { background-color: #4a1525; padding: 15px; border-radius: 10px; text-align: center; color: #ffffff !important; border: 2px solid #ff4b4b; margin-top: 15px; margin-bottom: 20px; }
     .creditos { text-align: center; color: #a0c0b5 !important; font-size: 0.8rem; margin-top: 50px; }
-    
-    /* Espaço Patrocinador Master Topo */
-    .banner-master {
-        background-color: #ffffff;
-        padding: 15px;
-        border-radius: 12px;
-        text-align: center;
-        border: 3px solid #d4af37;
-        margin-bottom: 25px;
-    }
-    .banner-master img {
-        max-height: 48px;
-        width: auto;
-        object-fit: contain;
-    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -258,13 +229,7 @@ else:
     st.sidebar.info("👁️ Modo Visualizador Público")
     st.sidebar.markdown("---")
     st.sidebar.markdown("### 🤝 Parceiro de Destaque")
-    st.sidebar.markdown(f"""
-        <div style="background-color: #ffffff; padding: 15px; border-radius: 8px; text-align: center; border: 2px solid #d4af37;">
-            <p style="color: #1b4d3e !important; font-weight: bold; font-size:0.8rem; margin-bottom: 10px;">APOIO EXCLUSIVO</p>
-            <img src="{PATROCINADORES['master']['logo']}" style="max-width: 90%; height: auto; max-height: 40px; object-fit: contain;">
-            <p style="color: #444444 !important; font-size: 0.75rem; margin-top: 10px; margin-bottom:0;">Valorize quem apoia o esporte tradicionalista local!</p>
-        </div>
-    """, unsafe_allow_html=True)
+    st.sidebar.image(PATROCINADORES['master']['logo'], caption="Patrocinador Master Cooperativo", use_container_width=True)
 
 # --- TRAVA MATEMÁTICA ---
 def conferir_e_ajustar_valores(s1, s2, t1, t2, n1, n2, mesa_id):
@@ -333,13 +298,11 @@ def iniciar_fase_matamata(lista_jogadores, nome_fase):
 # --- CONTEÚDO PRINCIPAL ---
 st.title("🏆 Painel Interativo de Truco")
 
-# 🌟 BANNER MASTER SUPERIOR CORRIGIDO COM IMAGEM PNG DIRETA
-st.markdown(f"""
-    <div class="banner-master">
-        <img src="{PATROCINADORES['master']['logo']}">
-        <p style="color: #2e7d32 !important; font-weight: bold; font-size: 0.8rem; margin: 8px 0 0 0; letter-spacing: 1.5px;">PATROCINADOR MASTER COOPERATIVO</p>
-    </div>
-""", unsafe_allow_html=True)
+# 🌟 EXIBIÇÃO DO PATROCINADOR MASTER COOPERATIVO (SEM COMPONENTES HTML INTERNOS)
+with st.container():
+    bg_col1, bg_col2, bg_col3 = st.columns([1, 2, 1])
+    with bg_col2:
+        st.image(PATROCINADORES["master"]["logo"], caption="PATROCINADOR MASTER COOPERATIVO", width=250)
 
 if not st.session_state.torneio_iniciado and is_admin:
     st.info(f"📢 **COMO FAZER OS JOGADORES ENTRAREM PELO CELULAR AGORA:**\n\n"
@@ -494,7 +457,13 @@ else:
                     texto_mesa = "🏆 GRANDE FINAL" if st.session_state.fase_matamata == "FINAIS" and not confronto.get("tipo") == "bronze" else ("🥉 DISPUTA DO 3º LUGAR" if confronto.get("tipo") == "bronze" else f"Mesa {idx+1}")
                     patro_url = PATROCINADORES["mesas"][idx % len(PATROCINADORES["mesas"])]["logo"]
                     
-                    st.markdown(f'<div class="card-mesa"><span class="texto-mesa-box">{texto_mesa}</span><img src="{patro_url}" class="tag-patrocinio-img"></div>', unsafe_allow_html=True)
+                    # Divisão segura em colunas nativas do Streamlit para evitar erros
+                    col_txt, col_img = st.columns([3, 1])
+                    with col_txt:
+                        st.markdown(f'<div class="card-mesa-clean"><span class="texto-mesa-box">{texto_mesa}</span></div>', unsafe_allow_html=True)
+                    with col_img:
+                        st.image(patro_url, width=100)
+
                     c1, c2 = st.columns(2)
                     with c1:
                         st.markdown(f"**{j1}**")
@@ -554,7 +523,12 @@ else:
             for idx, c in enumerate(st.session_state.confrontos_mm):
                 lbl = "🏆 Grande Final" if c["tipo"] == "normal" and st.session_state.fase_matamata == "FINAIS" else ("Disputa de 3º Lugar" if c["tipo"] == "bronze" else f"Mesa {idx+1}")
                 patro_url = PATROCINADORES["mesas"][idx % len(PATROCINADORES["mesas"])]["logo"]
-                st.markdown(f'<div class="card-mesa"><span class="texto-mesa-box">{lbl}: {c["j1"]} ⚔️ {c["j2"]}</span><img src="{patro_url}" class="tag-patrocinio-img"></div>', unsafe_allow_html=True)
+                
+                col_txt, col_img = st.columns([3, 1])
+                with col_txt:
+                    st.markdown(f'<div class="card-mesa-clean"><span class="texto-mesa-box">{lbl}: {c["j1"]} ⚔️ {c["j2"]}</span></div>', unsafe_allow_html=True)
+                with col_img:
+                    st.image(patro_url, width=100)
 
     else:
         tab_mesas, tab_tabela, tab_hist = st.tabs(["⚔️ Mesas da Rodada", "📊 Tabela Geral", "📜 Histórico de Jogos"])
@@ -578,7 +552,13 @@ else:
                         placares = []
                         for idx, (j1, j2) in enumerate(st.session_state.confrontos):
                             patro_url = PATROCINADORES["mesas"][idx % len(PATROCINADORES["mesas"])]["logo"]
-                            st.markdown(f'<div class="card-mesa"><span class="texto-mesa-box">Mesa {idx+1}</span><img src="{patro_url}" class="tag-patrocinio-img"></div>', unsafe_allow_html=True)
+                            
+                            col_txt, col_img = st.columns([3, 1])
+                            with col_txt:
+                                st.markdown(f'<div class="card-mesa-clean"><span class="texto-mesa-box">Mesa {idx+1}</span></div>', unsafe_allow_html=True)
+                            with col_img:
+                                st.image(patro_url, width=90)
+
                             if j2 == "CHAPÉU (Folga)":
                                 st.markdown(f"🤠 **{j1}** está no CHAPÉU")
                                 placares.append(None)
@@ -636,7 +616,12 @@ else:
                 else:
                     for idx, (j1, j2) in enumerate(st.session_state.confrontos):
                         patro_url = PATROCINADORES["mesas"][idx % len(PATROCINADORES["mesas"])]["logo"]
-                        st.markdown(f'<div class="card-mesa"><span class="texto-mesa-box">Mesa {idx+1}: {j1} ⚔️ {j2}</span><img src="{patro_url}" class="tag-patrocinio-img"></div>', unsafe_allow_html=True)
+                        
+                        col_txt, col_img = st.columns([3, 1])
+                        with col_txt:
+                            st.markdown(f'<div class="card-mesa-clean"><span class="texto-mesa-box">Mesa {idx+1}: {j1} ⚔️ {j2}</span></div>', unsafe_allow_html=True)
+                        with col_img:
+                            st.image(patro_url, width=90)
             else:
                 st.success("🎉 Classificatória Encerrada!")
                 if is_admin:
@@ -667,18 +652,17 @@ else:
                 st.session_state.clear()
                 st.rerun()
 
-# 🌟 PAINEL DE RODAPÉ ATUALIZADO (BACKDROP DE MARCAS COM LINKS EM ALTA DISPONIBILIDADE)
+# 🌟 PAINEL DE RODAPÉ NATIVO (MURAL DE PARCEIROS CONSTRUÍDO COM ST.COLUMNS)
+st.markdown('<hr style="border-color: #2c6b56; margin-top: 40px; margin-bottom: 20px;">', unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; font-weight: bold; color: #ffffff;'>🌟 PARCEIROS OFICIAIS DO ESPORTE E DA TRADIÇÃO 🌟</p>", unsafe_allow_html=True)
+
+rodape_cols = st.columns(5)
+for index, col in enumerate(rodape_cols):
+    with col:
+        st.image(PATROCINADORES["mesas"][index]["logo"], use_container_width=True)
+
 st.markdown(f"""
     <div class="creditos">
-        <hr style="border-color: #2c6b56; margin-bottom: 20px;">
-        <p style='margin:0 0 15px 0; font-weight: bold;'>🌟 PARCEIROS OFICIAIS DO ESPORTE E DA TRADIÇÃO 🌟</p>
-        <div style="display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap; background-color: #11221a; padding: 25px; border-radius: 12px; border: 1px solid #2c6b56;">
-            <div style="background: white; padding: 6px 12px; border-radius: 6px; display: flex; align-items: center; justify-content: center;"><img src="{PATROCINADORES['master']['logo']}" style="height: 25px; width: auto; object-fit: contain;"></div>
-            <div style="background: white; padding: 6px 12px; border-radius: 6px; display: flex; align-items: center; justify-content: center;"><img src="{PATROCINADORES['mesas'][1]['logo']}" style="height: 25px; width: auto; object-fit: contain;"></div>
-            <div style="background: white; padding: 6px 12px; border-radius: 6px; display: flex; align-items: center; justify-content: center;"><img src="{PATROCINADORES['mesas'][2]['logo']}" style="height: 25px; width: auto; object-fit: contain;"></div>
-            <div style="background: white; padding: 6px 12px; border-radius: 6px; display: flex; align-items: center; justify-content: center;"><img src="{PATROCINADORES['mesas'][3]['logo']}" style="height: 25px; width: auto; object-fit: contain;"></div>
-            <div style="background: white; padding: 6px 12px; border-radius: 6px; display: flex; align-items: center; justify-content: center;"><img src="{PATROCINADORES['mesas'][4]['logo']}" style="height: 25px; width: auto; object-fit: contain;"></div>
-        </div>
-        <p style="margin-top: 25px; font-size: 0.75rem;">💻 Criado por <b>{NOME_CRIADOR}</b> | Todos os direitos reservados © 2026</p>
+        <p style="margin-top: 20px; font-size: 0.75rem;">💻 Criado por <b>{NOME_CRIADOR}</b> | Todos os direitos reservados © 2026</p>
     </div>
 """, unsafe_allow_html=True)
