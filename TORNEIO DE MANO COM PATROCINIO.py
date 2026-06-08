@@ -23,18 +23,18 @@ CHAVE_ADMINISTRADOR = "truco123"
 # ==========================================
 # 🎯 BANCO DE DADOS DE PATROCINADORES (LOGOS REAIS)
 # ==========================================
-# Substitua os links abaixo pelas URLs das logos reais dos seus parceiros locais
+# Configuração de links de imagens compatíveis e seguros para exibição direta
 PATROCINADORES = {
     "master": {
         "nome": "Sicredi",
-        "logo": "https://www.sicredi.com.br/media/banners/sicredi-logo.png", 
+        "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Sicredi_logo.svg/512px-Sicredi_logo.svg.png", 
     },
     "mesas": [
-        {"nome": "Sicredi", "logo": "https://www.sicredi.com.br/media/banners/sicredi-logo.png"},
-        {"nome": "Salgadinhos Torcida", "logo": "https://via.placeholder.com/120x50/ffffff/111111?text=Torcida"},
-        {"nome": "Bet do Truco", "logo": "https://via.placeholder.com/120x50/ffffff/111111?text=Bet+Truco"},
-        {"nome": "Barbearia do Estilo", "logo": "https://via.placeholder.com/120x50/ffffff/111111?text=Barbearia"},
-        {"nome": "Churrascaria Gaúcha", "logo": "https://via.placeholder.com/120x50/ffffff/111111?text=Gaúcha"}
+        {"nome": "Sicredi", "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Sicredi_logo.svg/512px-Sicredi_logo.svg.png"},
+        {"nome": "Salgadinhos Torcida", "logo": "https://images.unilever.com/is/image/unilever/torcida_pimenta_80g_front_7891095013063?wid=150&fit=fit,1"},
+        {"nome": "Bet do Truco", "logo": "https://picsum.photos/id/1041/150/60?blur=1"}, # Exemplo simulado estável
+        {"nome": "Barbearia do Estilo", "logo": "https://picsum.photos/id/338/150/60?blur=1"},
+        {"nome": "Churrascaria Gaúcha", "logo": "https://picsum.photos/id/292/150/60?blur=1"}
     ]
 }
 
@@ -155,7 +155,7 @@ for chave, valor in valores_padrao.items():
 if os.path.exists(ARQUIVO_BACKUP):
     carregar_estado_do_disco()
 
-# --- ESTILIZAÇÃO CSS CORRIGIDA E ADAPTADA PARA IMAGENS ---
+# --- ESTILIZAÇÃO CSS ATUALIZADA ---
 st.markdown("""
     <style>
     .stApp { background-color: #1b4d3e; }
@@ -165,28 +165,30 @@ st.markdown("""
         font-weight: bold !important; border-radius: 8px !important; width: 100%;
     }
     
-    /* Box das Mesas com suporte a imagem alinhada */
+    /* Box Flexível para embutir logos nas mesas */
     .card-mesa { 
         background-color: #2c6b56; 
-        padding: 15px; 
+        padding: 12px 20px; 
         border-radius: 10px; 
-        margin-bottom: 12px; 
-        border: 1px solid #d4af37; 
-        display: flex; 
-        justify-content: space-between; 
+        margin-bottom: 15px; 
+        border: 1px solid #d4af37;
+        display: flex;
+        justify-content: space-between;
         align-items: center;
         min-height: 65px;
     }
     .texto-mesa-box {
-        font-size: 1.1rem;
+        font-size: 1.15rem;
+        font-weight: bold;
     }
-    .tag-patrocinio-img { 
-        max-height: 38px; 
-        width: auto; 
-        background-color: #ffffff; 
-        padding: 4px 8px; 
-        border-radius: 6px; 
-        box-shadow: 0px 2px 4px rgba(0,0,0,0.3);
+    .tag-patrocinio-img {
+        max-height: 35px;
+        max-width: 120px;
+        width: auto;
+        background-color: #ffffff;
+        padding: 4px 8px;
+        border-radius: 6px;
+        box-shadow: 0px 2px 5px rgba(0,0,0,0.3);
     }
     
     .card-historico { background-color: #14382d; padding: 10px; border-radius: 8px; margin-bottom: 10px; border-left: 5px solid #d4af37; }
@@ -199,18 +201,18 @@ st.markdown("""
     .box-flores { background-color: #4a1525; padding: 15px; border-radius: 10px; text-align: center; color: #ffffff !important; border: 2px solid #ff4b4b; margin-top: 15px; margin-bottom: 20px; }
     .creditos { text-align: center; color: #a0c0b5 !important; font-size: 0.8rem; margin-top: 50px; }
     
-    /* Banner Master Superior */
+    /* Espaço Premium do Patrocinador Master */
     .banner-master {
         background-color: #ffffff;
-        padding: 12px;
+        padding: 15px;
         border-radius: 12px;
         text-align: center;
         border: 3px solid #d4af37;
         margin-bottom: 25px;
-        box-shadow: 0px 4px 10px rgba(0,0,0,0.4);
+        box-shadow: 0px 4px 12px rgba(0,0,0,0.3);
     }
     .banner-master img {
-        max-height: 65px;
+        max-height: 55px;
         width: auto;
     }
     </style>
@@ -256,13 +258,13 @@ if is_admin:
 else:
     st.sidebar.info("👁️ Modo Visualizador Público")
     st.sidebar.markdown("---")
-    st.sidebar.markdown("### 🤝 Patrocinador do Evento")
-    # Banner comercial quadrado na lateral para visualizadores
+    st.sidebar.markdown("### 🤝 Parceiro de Destaque")
+    # Banner quadrado lateral fixo para o público
     st.sidebar.markdown(f"""
         <div style="background-color: #ffffff; padding: 15px; border-radius: 8px; text-align: center; border: 2px solid #d4af37;">
-            <p style="color: #1b4d3e !important; font-weight: bold; font-size:0.85rem; margin-bottom: 10px;">PARCEIRO EXCLUSIVO</p>
-            <img src="{PATROCINADORES['master']['logo']}" style="max-width: 85%; height: auto;">
-            <p style="color: #555555 !important; font-size: 0.75rem; margin-top: 10px; margin-bottom:0;">Quem escolhe o Sicredi indica. Abra sua conta!</p>
+            <p style="color: #1b4d3e !important; font-weight: bold; font-size:0.8rem; margin-bottom: 10px;">APOIO EXCLUSIVO</p>
+            <img src="{PATROCINADORES['master']['logo']}" style="max-width: 90%; height: auto;">
+            <p style="color: #444444 !important; font-size: 0.75rem; margin-top: 10px; margin-bottom:0;">Valorize quem apoia o esporte tradicionalista local!</p>
         </div>
     """, unsafe_allow_html=True)
 
@@ -331,13 +333,13 @@ def iniciar_fase_matamata(lista_jogadores, nome_fase):
     salvar_estado_no_disco()
 
 # --- CONTEÚDO PRINCIPAL ---
-st.title("🏆 Painel do Torneio")
+st.title("🏆 Painel Interativo de Truco")
 
-# 🌟 EXIBIÇÃO NOBRE: BANNER MASTER DO SICREDI NO TOPO COM DESIGN PREMIUM
+# 🌟 ÁREA NOBRE SUPERIOR: BANNER MASTER OFICIAL DO SICREDI CORRIGIDO
 st.markdown(f"""
     <div class="banner-master">
         <img src="{PATROCINADORES['master']['logo']}">
-        <p style="color: #2e7d32 !important; font-weight: bold; font-size: 0.8rem; margin: 5px 0 0 0; letter-spacing: 1px;">PATROCINADOR MASTER OFICIAL</p>
+        <p style="color: #2e7d32 !important; font-weight: bold; font-size: 0.8rem; margin: 8px 0 0 0; letter-spacing: 1.5px;">PATROCINADOR MASTER COOPERATIVO</p>
     </div>
 """, unsafe_allow_html=True)
 
@@ -495,7 +497,7 @@ else:
                     texto_mesa = "🏆 GRANDE FINAL" if st.session_state.fase_matamata == "FINAIS" and not confronto.get("tipo") == "bronze" else ("🥉 DISPUTA DO 3º LUGAR" if confronto.get("tipo") == "bronze" else f"Mesa {idx+1}")
                     patro_url = PATROCINADORES["mesas"][idx % len(PATROCINADORES["mesas"])]["logo"]
                     
-                    st.markdown(f'<div class="card-mesa"><span class="texto-mesa-box"><b>{texto_mesa}</b></span><img src="{patro_url}" class="tag-patrocinio-img"></div>', unsafe_allow_html=True)
+                    st.markdown(f'<div class="card-mesa"><span class="texto-mesa-box">{texto_mesa}</span><img src="{patro_url}" class="tag-patrocinio-img"></div>', unsafe_allow_html=True)
                     c1, c2 = st.columns(2)
                     with c1:
                         st.markdown(f"**{j1}**")
@@ -555,7 +557,7 @@ else:
             for idx, c in enumerate(st.session_state.confrontos_mm):
                 lbl = "🏆 Grande Final" if c["tipo"] == "normal" and st.session_state.fase_matamata == "FINAIS" else ("Disputa de 3º Lugar" if c["tipo"] == "bronze" else f"Mesa {idx+1}")
                 patro_url = PATROCINADORES["mesas"][idx % len(PATROCINADORES["mesas"])]["logo"]
-                st.markdown(f'<div class="card-mesa"><span class="texto-mesa-box"><b>{lbl}:</b> {c["j1"]} ⚔️ {c["j2"]}</span><img src="{patro_url}" class="tag-patrocinio-img"></div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="card-mesa"><span class="texto-mesa-box">{lbl}: {c["j1"]} ⚔️ {c["j2"]}</span><img src="{patro_url}" class="tag-patrocinio-img"></div>', unsafe_allow_html=True)
 
     else:
         tab_mesas, tab_tabela, tab_hist = st.tabs(["⚔️ Mesas da Rodada", "📊 Tabela Geral", "📜 Histórico de Jogos"])
@@ -579,7 +581,7 @@ else:
                         placares = []
                         for idx, (j1, j2) in enumerate(st.session_state.confrontos):
                             patro_url = PATROCINADORES["mesas"][idx % len(PATROCINADORES["mesas"])]["logo"]
-                            st.markdown(f'<div class="card-mesa"><span class="texto-mesa-box"><b>Mesa {idx+1}</b></span><img src="{patro_url}" class="tag-patrocinio-img"></div>', unsafe_allow_html=True)
+                            st.markdown(f'<div class="card-mesa"><span class="texto-mesa-box">Mesa {idx+1}</span><img src="{patro_url}" class="tag-patrocinio-img"></div>', unsafe_allow_html=True)
                             if j2 == "CHAPÉU (Folga)":
                                 st.markdown(f"🤠 **{j1}** está no CHAPÉU")
                                 placares.append(None)
@@ -612,7 +614,7 @@ else:
                                     else: dados_ajustados.append((ns1, ns2, nt1, nt2, f1, f2))
                                 else: dados_ajustados.append(None)
                                         
-                            if sucesso_validacao:
+                            if Planetary_validation := sucesso_validacao:
                                 dados_hist = []
                                 for idx, c in enumerate(dados_ajustados):
                                     j1, j2 = st.session_state.confrontos[idx]
@@ -637,7 +639,7 @@ else:
                 else:
                     for idx, (j1, j2) in enumerate(st.session_state.confrontos):
                         patro_url = PATROCINADORES["mesas"][idx % len(PATROCINADORES["mesas"])]["logo"]
-                        st.markdown(f'<div class="card-mesa"><span class="texto-mesa-box"><b>Mesa {idx+1}:</b> {j1} ⚔️ {j2}</span><img src="{patro_url}" class="tag-patrocinio-img"></div>', unsafe_allow_html=True)
+                        st.markdown(f'<div class="card-mesa"><span class="texto-mesa-box">Mesa {idx+1}: {j1} ⚔️ {j2}</span><img src="{patro_url}" class="tag-patrocinio-img"></div>', unsafe_allow_html=True)
             else:
                 st.success("🎉 Classificatória Encerrada!")
                 if is_admin:
@@ -668,19 +670,18 @@ else:
                 st.session_state.clear()
                 st.rerun()
 
-# 🌟 PAINEL COMERCIAL EXCLUSIVO DE RODAPÉ (INFLUÊNCIA DE COLETIVA DE IMPRENSA)
-# Alinha todas as logos lado a lado com caixas brancas idênticas e organizadas para valorizar o investimento das marcas
+# 🌟 PAINEL COMERCIAL PREMIUM DE RODAPÉ (BACKDROP DE MARCAS)
 st.markdown(f"""
     <div class="creditos">
         <hr style="border-color: #2c6b56; margin-bottom: 20px;">
-        <p style='margin:0 0 15px 0;'><b>🌟 PARCEIROS COMPROMETIDOS COM O ESPORTE TRADICIONALISTA 🌟</b></p>
-        <div style="display: flex; justify-content: center; align-items: center; gap: 15px; flex-wrap: wrap; background-color: #11221a; padding: 20px; border-radius: 12px; border: 1px solid #2c6b56;">
-            <div style="background: white; padding: 5px 10px; border-radius: 6px; display: inline-block;"><img src="{PATROCINADORES['master']['logo']}" style="height: 32px; width: auto;"></div>
-            <div style="background: white; padding: 5px 10px; border-radius: 6px; display: inline-block; color: #111111; font-weight: bold; font-size: 0.85rem; font-family: sans-serif; line-height: 32px; height: 32px;">🍿 Torcida</div>
-            <div style="background: white; padding: 5px 10px; border-radius: 6px; display: inline-block; color: #111111; font-weight: bold; font-size: 0.85rem; font-family: sans-serif; line-height: 32px; height: 32px;">🎰 Bet do Truco</div>
-            <div style="background: white; padding: 5px 10px; border-radius: 6px; display: inline-block; color: #111111; font-weight: bold; font-size: 0.85rem; font-family: sans-serif; line-height: 32px; height: 32px;">💈 Barbearia</div>
-            <div style="background: white; padding: 5px 10px; border-radius: 6px; display: inline-block; color: #111111; font-weight: bold; font-size: 0.85rem; font-family: sans-serif; line-height: 32px; height: 32px;">🥩 Churrascaria</div>
+        <p style='margin:0 0 15px 0; font-weight: bold;'>🌟 PARCEIROS OFICIAIS DO ESPORTE E DA TRADIÇÃO 🌟</p>
+        <div style="display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap; background-color: #11221a; padding: 25px; border-radius: 12px; border: 1px solid #2c6b56;">
+            <div style="background: white; padding: 6px 12px; border-radius: 6px; display: flex; align-items: center; justify-content: center;"><img src="{PATROCINADORES['master']['logo']}" style="height: 30px; width: auto;"></div>
+            <div style="background: white; padding: 6px 12px; border-radius: 6px; display: flex; align-items: center; justify-content: center;"><img src="{PATROCINADORES['mesas'][1]['logo']}" style="height: 30px; width: auto;"></div>
+            <div style="background: white; padding: 6px 12px; border-radius: 6px; display: flex; align-items: center; justify-content: center;"><img src="{PATROCINADORES['mesas'][2]['logo']}" style="height: 30px; width: auto;"></div>
+            <div style="background: white; padding: 6px 12px; border-radius: 6px; display: flex; align-items: center; justify-content: center;"><img src="{PATROCINADORES['mesas'][3]['logo']}" style="height: 30px; width: auto;"></div>
+            <div style="background: white; padding: 6px 12px; border-radius: 6px; display: flex; align-items: center; justify-content: center;"><img src="{PATROCINADORES['mesas'][4]['logo']}" style="height: 30px; width: auto;"></div>
         </div>
-        <p style="margin-top: 20px; font-size: 0.75rem;">💻 Criado por <b>{NOME_CRIADOR}</b> | Todos os direitos reservados © 2026</p>
+        <p style="margin-top: 25px; font-size: 0.75rem;">💻 Criado por <b>{NOME_CRIADOR}</b> | Todos os direitos reservados © 2026</p>
     </div>
 """, unsafe_allow_html=True)
