@@ -21,19 +21,24 @@ ARQUIVO_GALERIA = "galeria_campeoes.json"
 CHAVE_ADMINISTRADOR = "truco123"
 
 # ==========================================
-# 🎯 BANCO DE DADOS DE PATROCINADORES (LINKS NATIVOS DE ALTA ESTABILIDADE)
+# 🖼️ BANCO DE DADOS DE IMAGENS ATUALIZADO
+# Mapeamento exato com base na estrutura da sua pasta
 # ==========================================
 PATROCINADORES = {
     "master": {
         "nome": "Sicredi",
-        "logo": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Logo_Sicredi.png", 
+        "logo": "imagens/sicredi.png"
+    },
+    "secundario": {
+        "nome": "Copag",
+        "logo": "imagens/copag.png"
     },
     "mesas": [
-        {"nome": "Sicredi", "logo": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Logo_Sicredi.png"},
-        {"nome": "Coca-Cola", "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Coca-Cola_logo_PNG1.png/240px-Coca-Cola_logo_PNG1.png"},
-        {"nome": "Pringles", "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Pringles_New_Logo.svg/220px-Pringles_New_Logo.svg.png"}, 
-        {"nome": "Barbearia", "logo": "https://i.imgur.com/KdfGvQG.jpg"},
-        {"nome": "Churrascaria", "logo": "https://i.imgur.com/vHkaVIn.jpg"}
+        {"nome": "Sicredi", "logo": "imagens/sicredi.png"},
+        {"nome": "Copag", "logo": "imagens/copag.png"},
+        {"nome": "O Chimarrão", "logo": "imagens/o chimarrão.PNG"},
+        {"nome": "Pampa", "logo": "imagens/pampa.PNG"},
+        {"nome": "Rio Grande", "logo": "imagens/rio grande.PNG"}
     ]
 }
 
@@ -154,7 +159,7 @@ for chave, valor in valores_padrao.items():
 if os.path.exists(ARQUIVO_BACKUP):
     carregar_estado_do_disco()
 
-# --- ESTILIZAÇÃO CSS DESIGN ---
+# --- ESTILIZAÇÃO CSS ---
 st.markdown("""
     <style>
     .stApp { background-color: #1b4d3e; }
@@ -163,20 +168,7 @@ st.markdown("""
         background-color: #d4af37 !important; color: #111111 !important;
         font-weight: bold !important; border-radius: 8px !important; width: 100%;
     }
-    
-    /* Box Limpo para as Mesas */
-    .card-mesa-clean { 
-        background-color: #2c6b56; 
-        padding: 14px; 
-        border-radius: 10px; 
-        border: 1px solid #d4af37;
-        margin-bottom: 5px;
-    }
-    .texto-mesa-box {
-        font-size: 1.2rem;
-        font-weight: bold;
-    }
-    
+    .card-mesa { background-color: #2c6b56; padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #d4af37; }
     .card-historico { background-color: #14382d; padding: 10px; border-radius: 8px; margin-bottom: 10px; border-left: 5px solid #d4af37; }
     .cronometro-box { background-color: #11221a; border: 2px solid #d4af37; padding: 10px; border-radius: 8px; text-align: center; font-family: 'Courier New', Courier, monospace; margin-bottom: 15px; }
     .box-campeao { background-color: #d4af37; padding: 25px; border-radius: 15px; text-align: center; color: #111111 !important; border: 3px solid #ffffff; margin-bottom: 15px; }
@@ -202,7 +194,7 @@ def obter_ip_da_rede():
 
 url_oficial = obter_ip_da_rede()
 
-# --- CONTROLE DE ACESSO E SIDEBAR COMMERCIAL ---
+# --- CONTROLE DE ACESSO E SIDEBAR ---
 st.sidebar.markdown("### 🔐 Controle de Acesso")
 senha_inserida = st.sidebar.text_input("Chave do Operador:", type="password")
 is_admin = (senha_inserida == CHAVE_ADMINISTRADOR)
@@ -218,6 +210,7 @@ if is_admin:
     st.sidebar.markdown("**Compartilhar no WhatsApp:**")
     st.sidebar.code(url_torneio, language="text")
     
+    # Gerador de QR Code
     qr = qrcode.QRCode(version=1, box_size=10, border=4)
     qr.add_data(url_torneio)
     qr.make(fit=True)
@@ -228,8 +221,15 @@ if is_admin:
 else:
     st.sidebar.info("👁️ Modo Visualizador Público")
     st.sidebar.markdown("---")
-    st.sidebar.markdown("### 🤝 Parceiro de Destaque")
-    st.sidebar.image(PATROCINADORES['master']['logo'], caption="Patrocinador Master Cooperativo", use_container_width=True)
+    
+    # Renderização da Hierarquia na barra lateral pública
+    st.sidebar.markdown("### 🥇 Patrocinador Master")
+    if os.path.exists(PATROCINADORES["master"]["logo"]):
+        st.sidebar.image(PATROCINADORES["master"]["logo"], use_container_width=True)
+        
+    st.sidebar.markdown("### 🥈 Apoio Especial")
+    if os.path.exists(PATROCINADORES["secundario"]["logo"]):
+        st.sidebar.image(PATROCINADORES["secundario"]["logo"], use_container_width=True)
 
 # --- TRAVA MATEMÁTICA ---
 def conferir_e_ajustar_valores(s1, s2, t1, t2, n1, n2, mesa_id):
@@ -296,19 +296,17 @@ def iniciar_fase_matamata(lista_jogadores, nome_fase):
     salvar_estado_no_disco()
 
 # --- CONTEÚDO PRINCIPAL ---
-st.title("🏆 Painel Interativo de Truco")
+st.title("🏆 Truco de Mano")
 
-# 🌟 EXIBIÇÃO DO PATROCINADOR MASTER COOPERATIVO (SEM COMPONENTES HTML INTERNOS)
-with st.container():
-    bg_col1, bg_col2, bg_col3 = st.columns([1, 2, 1])
-    with bg_col2:
-        st.image(PATROCINADORES["master"]["logo"], caption="PATROCINADOR MASTER COOPERATIVO", width=250)
+# Exibição do Banner Master no Topo Centralizado
+if os.path.exists(PATROCINADORES["master"]["logo"]):
+    st.image(PATROCINADORES["master"]["logo"], width=220)
 
 if not st.session_state.torneio_iniciado and is_admin:
     st.info(f"📢 **COMO FAZER OS JOGADORES ENTRAREM PELO CELULAR AGORA:**\n\n"
-            f"1. Ligue o **Ponto de Acesso/Roteador** do seu celular e conecte o seu notebook a ele.\n"
+            f"1. Ligue o **Ponto de Acesso/Roteador** do seu celular e conecte o notebook a ele.\n"
             f"2. Peça para os jogadores se conectarem ao **mesmo Wi-Fi**.\n"
-            f"3. Pronto! Eles só precisam ler o QR Code da barra lateral ou acessar: `{url_oficial}`")
+            f"3. Pronto! Eles leem o QR Code da barra lateral ou digitam: `{url_oficial}`")
 
 # === TELA 1: CADASTRO / CONFIGURAÇÃO DO TORNEIO ===
 if not st.session_state.torneio_iniciado:
@@ -455,14 +453,14 @@ else:
                 for idx, confronto in enumerate(st.session_state.confrontos_mm):
                     j1, j2 = confronto["j1"], confronto["j2"]
                     texto_mesa = "🏆 GRANDE FINAL" if st.session_state.fase_matamata == "FINAIS" and not confronto.get("tipo") == "bronze" else ("🥉 DISPUTA DO 3º LUGAR" if confronto.get("tipo") == "bronze" else f"Mesa {idx+1}")
-                    patro_url = PATROCINADORES["mesas"][idx % len(PATROCINADORES["mesas"])]["logo"]
+                    patro_atual = PATROCINADORES["mesas"][idx % len(PATROCINADORES["mesas"])]
                     
-                    # Divisão segura em colunas nativas do Streamlit para evitar erros
-                    col_txt, col_img = st.columns([3, 1])
-                    with col_txt:
-                        st.markdown(f'<div class="card-mesa-clean"><span class="texto-mesa-box">{texto_mesa}</span></div>', unsafe_allow_html=True)
-                    with col_img:
-                        st.image(patro_url, width=100)
+                    col_m_txt, col_m_img = st.columns([4, 1])
+                    with col_m_txt:
+                        st.markdown(f"### ⚔️ {texto_mesa}")
+                    with col_m_img:
+                        if os.path.exists(patro_atual["logo"]):
+                            st.image(patro_atual["logo"], width=45)
 
                     c1, c2 = st.columns(2)
                     with c1:
@@ -522,13 +520,14 @@ else:
         else:
             for idx, c in enumerate(st.session_state.confrontos_mm):
                 lbl = "🏆 Grande Final" if c["tipo"] == "normal" and st.session_state.fase_matamata == "FINAIS" else ("Disputa de 3º Lugar" if c["tipo"] == "bronze" else f"Mesa {idx+1}")
-                patro_url = PATROCINADORES["mesas"][idx % len(PATROCINADORES["mesas"])]["logo"]
-                
-                col_txt, col_img = st.columns([3, 1])
-                with col_txt:
-                    st.markdown(f'<div class="card-mesa-clean"><span class="texto-mesa-box">{lbl}: {c["j1"]} ⚔️ {c["j2"]}</span></div>', unsafe_allow_html=True)
-                with col_img:
-                    st.image(patro_url, width=100)
+                patro_atual = PATROCINADORES["mesas"][idx % len(PATROCINADORES["mesas"])]
+                with st.container():
+                    col_p_txt, col_p_img = st.columns([4, 1])
+                    with col_p_txt:
+                        st.markdown(f"**{lbl}:** {c['j1']} ⚔️ {c['j2']}")
+                    with col_p_img:
+                        if os.path.exists(patro_atual["logo"]):
+                            st.image(patro_atual["logo"], width=40)
 
     else:
         tab_mesas, tab_tabela, tab_hist = st.tabs(["⚔️ Mesas da Rodada", "📊 Tabela Geral", "📜 Histórico de Jogos"])
@@ -551,14 +550,15 @@ else:
                     with st.form(key=f"form_rodada_exec_{st.session_state.rodada_atual}"):
                         placares = []
                         for idx, (j1, j2) in enumerate(st.session_state.confrontos):
-                            patro_url = PATROCINADORES["mesas"][idx % len(PATROCINADORES["mesas"])]["logo"]
+                            patro_atual = PATROCINADORES["mesas"][idx % len(PATROCINADORES["mesas"])]
                             
-                            col_txt, col_img = st.columns([3, 1])
-                            with col_txt:
-                                st.markdown(f'<div class="card-mesa-clean"><span class="texto-mesa-box">Mesa {idx+1}</span></div>', unsafe_allow_html=True)
-                            with col_img:
-                                st.image(patro_url, width=90)
-
+                            col_m_txt, col_m_img = st.columns([4, 1])
+                            with col_m_txt:
+                                st.markdown(f"### 🎯 Mesa {idx+1}")
+                            with col_m_img:
+                                if os.path.exists(patro_atual["logo"]):
+                                    st.image(patro_atual["logo"], width=45)
+                                    
                             if j2 == "CHAPÉU (Folga)":
                                 st.markdown(f"🤠 **{j1}** está no CHAPÉU")
                                 placares.append(None)
@@ -615,13 +615,14 @@ else:
                                 st.rerun()
                 else:
                     for idx, (j1, j2) in enumerate(st.session_state.confrontos):
-                        patro_url = PATROCINADORES["mesas"][idx % len(PATROCINADORES["mesas"])]["logo"]
-                        
-                        col_txt, col_img = st.columns([3, 1])
-                        with col_txt:
-                            st.markdown(f'<div class="card-mesa-clean"><span class="texto-mesa-box">Mesa {idx+1}: {j1} ⚔️ {j2}</span></div>', unsafe_allow_html=True)
-                        with col_img:
-                            st.image(patro_url, width=90)
+                        patro_atual = PATROCINADORES["mesas"][idx % len(PATROCINADORES["mesas"])]
+                        with st.container():
+                            col_p_txt, col_p_img = st.columns([4, 1])
+                            with col_p_txt:
+                                st.markdown(f"**Mesa {idx+1}:** {j1} ⚔️ {j2}")
+                            with col_p_img:
+                                if os.path.exists(patro_atual["logo"]):
+                                    st.image(patro_atual["logo"], width=40)
             else:
                 st.success("🎉 Classificatória Encerrada!")
                 if is_admin:
@@ -652,17 +653,22 @@ else:
                 st.session_state.clear()
                 st.rerun()
 
-# 🌟 PAINEL DE RODAPÉ NATIVO (MURAL DE PARCEIROS CONSTRUÍDO COM ST.COLUMNS)
-st.markdown('<hr style="border-color: #2c6b56; margin-top: 40px; margin-bottom: 20px;">', unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; font-weight: bold; color: #ffffff;'>🌟 PARCEIROS OFICIAIS DO ESPORTE E DA TRADIÇÃO 🌟</p>", unsafe_allow_html=True)
+# --- CARROSEL / CARDS DE PARCEIROS NO RODAPÉ ---
+st.markdown('<hr style="border-color: #2c6b56; margin-top: 40px;">', unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; font-weight: bold;'>🤝 PARCEIROS OFICIAIS DA TRADIÇÃO</p>", unsafe_allow_html=True)
 
-rodape_cols = st.columns(5)
-for index, col in enumerate(rodape_cols):
+# Loop Inteligente que percorre todas as 5 imagens da sua pasta e renderiza de forma limpa no rodapé
+col_f1, col_f2, col_f3, col_f4, col_f5 = st.columns(5)
+for i, col in enumerate([col_f1, col_f2, col_f3, col_f4, col_f5]):
     with col:
-        st.image(PATROCINADORES["mesas"][index]["logo"], use_container_width=True)
+        patro = PATROCINADORES["mesas"][i]
+        if os.path.exists(patro["logo"]):
+            st.image(patro["logo"], use_container_width=True, caption=patro["nome"])
+        else:
+            st.caption(patro["nome"])
 
 st.markdown(f"""
     <div class="creditos">
-        <p style="margin-top: 20px; font-size: 0.75rem;">💻 Criado por <b>{NOME_CRIADOR}</b> | Todos os direitos reservados © 2026</p>
+        💻 Criado por <b>{NOME_CRIADOR}</b> | Todos os direitos reservados © 2026
     </div>
 """, unsafe_allow_html=True)
