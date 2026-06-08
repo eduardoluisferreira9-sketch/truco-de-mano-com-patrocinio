@@ -21,7 +21,7 @@ ARQUIVO_GALERIA = "galeria_campeoes.json"
 CHAVE_ADMINISTRADOR = "truco123"
 
 # ==========================================
-# 🎯 BANCO DE DADOS DE PATROCINADORES (Substitua as URLs pelas logos reais)
+# 🎯 BANCO DE DADOS DE PATROCINADORES
 # ==========================================
 PATROCINADORES = {
     "master": {
@@ -162,7 +162,7 @@ st.markdown("""
         background-color: #d4af37 !important; color: #111111 !important;
         font-weight: bold !important; border-radius: 8px !important; width: 100%;
     }
-    .card-mesa { background-color: #2c6b56; padding: 15px; border-radius: 10px; margin-bottom: 5px; border: 1px solid #d4af37; position: relative; }
+    .card-mesa { background-color: #2c6b56; padding: 15px; border-radius: 10px; margin-bottom: 5px; border: 1px solid #d4af37; position: relative; display: block; clear: both; min-height: 50px; }
     .tag-patrocinio { float: right; font-size: 0.75rem; background-color: #d4af37; color: #111111; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
     .card-historico { background-color: #14382d; padding: 10px; border-radius: 8px; margin-bottom: 10px; border-left: 5px solid #d4af37; }
     .cronometro-box { background-color: #11221a; border: 2px solid #d4af37; padding: 10px; border-radius: 8px; text-align: center; font-family: 'Courier New', Courier, monospace; margin-bottom: 15px; }
@@ -216,7 +216,6 @@ if is_admin:
     st.sidebar.image(buf.getvalue(), caption="Jogadores: Escaneiem para abrir!", use_container_width=True)
 else:
     st.sidebar.info("👁️ Modo Visualizador Público")
-    # 🌟 PATROCÍNIO LATERAL NO MODO PÚBLICO
     st.sidebar.markdown("---")
     st.sidebar.markdown("### 🤝 Apoio Oficial")
     st.sidebar.image("https://via.placeholder.com/300x250/11221a/d4af37?text=Espaço+Disponível+Aqui")
@@ -288,7 +287,7 @@ def iniciar_fase_matamata(lista_jogadores, nome_fase):
 # --- CONTEÚDO PRINCIPAL ---
 st.title("🏆 Truco de Mano")
 
-# 🌟 1. BANNER MASTER NO TOPO DA TELA
+# 🌟 BANNER MASTER NO TOPO DA TELA
 st.image(PATROCINADORES["master"]["logo"], use_container_width=True)
 
 # Guia visual rápido na página inicial para o administrador conectar o pessoal
@@ -421,7 +420,7 @@ else:
                 with c_c1:
                     if st.button("⏹️ Resetar Tempo"):
                         st.session_state.hora_inicio_rodada = None
-                        st.session_state.cronometro_ativo = False
+                        st.session_state.cronorche_ativo = False
                         salvar_estado_no_disco()
                         st.rerun()
                 with c_c2:
@@ -503,9 +502,8 @@ else:
         else:
             for idx, c in enumerate(st.session_state.confrontos_mm):
                 lbl = "🏆 Grande Final" if c["tipo"] == "normal" and st.session_state.fase_matamata == "FINAIS" else ("Disputa de 3º Lugar" if c["tipo"] == "bronze" else f"Mesa {idx+1}")
-                # 🌟 2. PATROCÍNIO DA MESA NO MATA-MATA (PÚBLICO)
-                patro_atual = PATROCINADORES["mesas"][idx % len(PATROCINADORES["mesas"])]["logo"]
-                st.markdown(f"<div class='card-mesa'><span class='tag-patrocinio'>Apoio: {patro_atual}</span><b>{lbl}:</b> {c['j1']} ⚔️ {c['j2']}</div>", unsafe_allow_html=True)
+                patro_atual = PATROCINADORES["mesas"][idx % len(PATROCINADORES["mesas"])]["nome"]
+                st.markdown(f'<div class="card-mesa"><span class="tag-patrocinio">Apoio: {patro_atual}</span><b>{lbl}:</b> {c["j1"]} ⚔️ {c["j2"]}</div>', unsafe_allow_html=True)
 
     else:
         tab_mesas, tab_tabela, tab_hist = st.tabs(["⚔️ Mesas da Rodada", "📊 Tabela Geral", "📜 Histórico de Jogos"])
@@ -528,9 +526,8 @@ else:
                     with st.form(key=f"form_rodada_exec_{st.session_state.rodada_atual}"):
                         placares = []
                         for idx, (j1, j2) in enumerate(st.session_state.confrontos):
-                            # 🌟 3. PATROCÍNIO NAS MESAS DE CADASTRO (ADMINISTRADOR)
-                            patro_atual = PATROCINADORES["mesas"][idx % len(PATROCINADORES["mesas"])]["logo"]
-                            st.markdown(f'<div class="card-mesa"><span class='tag-patrocinio'>Apoio: {patro_atual}</span><b>Mesa {idx+1}</b></div>', unsafe_allow_html=True)
+                            patro_atual = PATROCINADORES["mesas"][idx % len(PATROCINADORES["mesas"])]["nome"]
+                            st.markdown(f'<div class="card-mesa"><span class="tag-patrocinio">Apoio: {patro_atual}</span><b>Mesa {idx+1}</b></div>', unsafe_allow_html=True)
                             if j2 == "CHAPÉU (Folga)":
                                 st.markdown(f"🤠 **{j1}** está no CHAPÉU")
                                 placares.append(None)
@@ -587,9 +584,8 @@ else:
                                 st.rerun()
                 else:
                     for idx, (j1, j2) in enumerate(st.session_state.confrontos):
-                        # 🌟 4. PATROCÍNIO NAS MESAS DA RODADA ATUAL (PÚBLICO)
-                        patro_atual = PATROCINADORES["mesas"][idx % len(PATROCINADORES["mesas"])]["logo"]
-                        st.markdown(f"<div class='card-mesa'><span class='tag-patrocinio'>Apoio: {patro_atual}</span><b>Mesa {idx+1}:</b> {j1} ⚔️ {j2}</div>", unsafe_allow_html=True)
+                        patro_atual = PATROCINADORES["mesas"][idx % len(PATROCINADORES["mesas"])]["nome"]
+                        st.markdown(f'<div class="card-mesa"><span class="tag-patrocinio">Apoio: {patro_atual}</span><b>Mesa {idx+1}:</b> {j1} ⚔️ {j2}</div>', unsafe_allow_html=True)
             else:
                 st.success("🎉 Classificatória Encerrada!")
                 if is_admin:
@@ -620,7 +616,7 @@ else:
                 st.session_state.clear()
                 st.rerun()
 
-# 🌟 5. RODAPÉ COMERCIAL DE PATROCINADORES
+# 🌟 RODAPÉ COMERCIAL DE PATROCINADORES
 st.markdown(f"""
     <div class="creditos">
         <hr style="border-color: #2c6b56;">
