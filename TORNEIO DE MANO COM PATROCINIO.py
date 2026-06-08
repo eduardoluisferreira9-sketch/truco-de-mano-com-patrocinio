@@ -170,7 +170,7 @@ st.markdown("""
     }
     .card-mesa { background-color: #2c6b56; padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #d4af37; }
     .card-historico { background-color: #14382d; padding: 10px; border-radius: 8px; margin-bottom: 10px; border-left: 5px solid #d4af37; }
-    .cronometro-box { background-color: #11221a; border: 2px solid #d4af37; padding: 10px; border-radius: 8px; text-align: center; font-family: 'Courier New', Courier, monospace; margin-bottom: 15px; }
+    .cronometro-box { background-color: #11221a; border: 2px solid #d4af37; padding: 12px; border-radius: 8px; text-align: center; font-family: 'Courier New', Courier, monospace; margin-bottom: 15px; }
     .box-campeao { background-color: #d4af37; padding: 25px; border-radius: 15px; text-align: center; color: #111111 !important; border: 3px solid #ffffff; margin-bottom: 15px; }
     .podio-posicao { padding: 15px; border-radius: 10px; text-align: center; font-weight: bold; margin-bottom: 10px; color: #ffffff !important; }
     .podio-vice { background-color: #a0a0a0; border: 2px solid #d1d1d1; }
@@ -386,10 +386,46 @@ if not st.session_state.torneio_iniciado:
         else:
             st.info("A galeria de honra está limpa.")
 
-# === TELA 2: ANDAMENTO DO TORNEIO ===
+# === TELA 2: ANDAMENTO DO TORNEIO (CLASSIFICATÓRIA OU MATA-MATA) ===
 else:
     st.markdown(f"### 🏟️ {st.session_state.nome_torneio}")
     
+    # ⏱️ BLOCÃO FIXO DO CRONÔMETRO NO TOPO DA TELA (Executa enquanto não houver um Campeão definido)
+    if not st.session_state.campeao:
+        if st.session_state.cronometro_ativo and st.session_state.hora_inicio_rodada:
+            tempo_limite = st.session_state.hora_inicio_rodada + timedelta(minutes=45)
+            tempo_atual = datetime.now()
+            if tempo_atual < tempo_limite:
+                tempo_restante = tempo_limite - tempo_atual
+                minutos, segundos = int(tempo_restante.total_seconds() // 60), int(tempo_restante.total_seconds() % 60)
+                st.markdown(f'<div class="cronometro-box"><h3 style="margin:0; color:#d4af37 !important;">⏱️ TEMPO RESTANTE DA RODADA: {minutos:02d}:{segundos:02d}</h3></div>', unsafe_allow_html=True)
+            else:
+                st.markdown('<div class="cronometro-box"><h3 style="margin:0; color:#ff4b4b !important;">⏰ TEMPO ESGOTADO NESTA RODADA!</h3></div>', unsafe_allow_html=True)
+            
+            # Controles exclusivos do Admin para ajustar o tempo
+            if is_admin:
+                c_c1, c_c2 = st.columns(2)
+                with c_c1:
+                    if st.button("⏹️ Resetar/Pausar Tempo"):
+                        st.session_state.hora_inicio_rodada = None
+                        st.session_state.cronometro_ativo = False
+                        salvar_estado_no_disco()
+                        st.rerun()
+                with c_c2:
+                    if st.button("🔓 Conceder +5 Minutos"):
+                        st.session_state.hora_inicio_rodada += timedelta(minutes=5)
+                        salvar_estado_no_disco()
+                        st.rerun()
+        else:
+            st.markdown('<div class="cronometro-box"><h3 style="margin:0; color:#a0a0a0 !important;">⏱️ CRONÔMETRO PAUSADO / AGUARDANDO INÍCIO</h3></div>', unsafe_allow_html=True)
+            if is_admin:
+                if st.button("▶️ DISPARAR CRONÔMETRO DE RODADA (45 MIN)"):
+                    st.session_state.hora_inicio_rodada = datetime.now()
+                    st.session_state.cronometro_ativo = True
+                    salvar_estado_no_disco()
+                    st.rerun()
+
+    # 🏆 SE JÁ TEMOS UM CAMPEÃO DEFINIDO
     if st.session_state.campeao:
         st.markdown("<h2 style='text-align: center; color: #d4af37 !important;'>✨ CERIMÔNIA DE PREMIAÇÃO FINAL ✨</h2>", unsafe_allow_html=True)
         rei_das_flores = st.session_state.classificacao.sort_values(by='Flores', ascending=False).index[0]
@@ -413,39 +449,9 @@ else:
             st.session_state.jogadores = jsalvos
             st.rerun()
 
+    # ⚡ SE O TORNEIO ESTÁ NA FASE DE MATA-MATA
     elif st.session_state.em_matamata:
         st.markdown(f"#### ⚡ Fase: {st.session_state.fase_matamata}")
-        
-        if st.session_state.cronometro_ativo and st.session_state.hora_inicio_rodada:
-            tempo_limite = st.session_state.hora_inicio_rodada + timedelta(minutes=45)
-            tempo_atual = datetime.now()
-            if tempo_atual < tempo_limite:
-                tempo_restante = tempo_limite - tempo_atual
-                minutos, segundos = int(tempo_restante.total_seconds() // 60), int(tempo_restante.total_seconds() % 60)
-                st.markdown(f'<div class="cronometro-box"><h3 style="margin:0; color:#d4af37 !important;">⏱️ TEMPO RESTANTE DO MATA-MATA: {minutos:02d}:{segundos:02d}</h3></div>', unsafe_allow_html=True)
-            else:
-                st.markdown('<div class="cronometro-box"><h3 style="margin:0; color:#ff4b4b !important;">⏰ TEMPO ESGOTADO NESTA FASE!</h3></div>', unsafe_allow_html=True)
-            
-            if is_admin:
-                c_c1, c_c2 = st.columns(2)
-                with c_c1:
-                    if st.button("⏹️ Resetar Tempo"):
-                        st.session_state.hora_inicio_rodada = None
-                        st.session_state.cronometro_ativo = False
-                        salvar_estado_no_disco()
-                        st.rerun()
-                with c_c2:
-                    if st.button("🔓 Conceder +5 Minutos"):
-                        st.session_state.hora_inicio_rodada += timedelta(minutes=5)
-                        salvar_estado_no_disco()
-                        st.rerun()
-        else:
-            st.markdown('<div class="cronometro-box"><h3 style="margin:0; color:#a0a0a0 !important;">⏱️ CRONÔMETRO PAUSADO / AGUARDANDO INÍCIO</h3></div>', unsafe_allow_html=True)
-            if is_admin and st.button("▶️ DISPARAR CRONÔMETRO (45 MIN)"):
-                st.session_state.hora_inicio_rodada = datetime.now()
-                st.session_state.cronometro_ativo = True
-                salvar_estado_no_disco()
-                st.rerun()
         
         if is_admin:
             with st.form(key=f"mm_form_{st.session_state.fase_matamata}"):
@@ -529,22 +535,13 @@ else:
                         if os.path.exists(patro_atual["logo"]):
                             st.image(patro_atual["logo"], width=40)
 
+    # 📊 SE O TORNEIO ESTÁ NA FASE DE CLASSIFICATÓRIA POR PONTOS
     else:
         tab_mesas, tab_tabela, tab_hist = st.tabs(["⚔️ Mesas da Rodada", "📊 Tabela Geral", "📜 Histórico de Jogos"])
         
         with tab_mesas:
             if st.session_state.rodada_atual <= 5:
                 st.markdown(f"#### 📅 Rodada {st.session_state.rodada_atual} de 5")
-                
-                if st.session_state.cronometro_ativo and st.session_state.hora_inicio_rodada:
-                    tempo_limite = st.session_state.hora_inicio_rodada + timedelta(minutes=45)
-                    tempo_atual = datetime.now()
-                    if tempo_atual < tempo_limite:
-                        tempo_restante = tempo_limite - tempo_atual
-                        minutos, segundos = int(tempo_restante.total_seconds() // 60), int(tempo_restante.total_seconds() % 60)
-                        st.markdown(f'<div class="cronometro-box"><h3 style="margin:0; color:#d4af37 !important;">⏱️ TEMPO RESTANTE: {minutos:02d}:{segundos:02d}</h3></div>', unsafe_allow_html=True)
-                    else:
-                        st.markdown('<div class="cronometro-box"><h3 style="margin:0; color:#ff4b4b !important;">⏰ TEMPO ESGOTADO!</h3></div>', unsafe_allow_html=True)
                 
                 if is_admin:
                     with st.form(key=f"form_rodada_exec_{st.session_state.rodada_atual}"):
@@ -657,7 +654,6 @@ else:
 st.markdown('<hr style="border-color: #2c6b56; margin-top: 40px;">', unsafe_allow_html=True)
 st.markdown("<p style='text-align: center; font-weight: bold;'>🤝 PARCEIROS OFICIAIS DA TRADIÇÃO</p>", unsafe_allow_html=True)
 
-# Loop Inteligente que percorre todas as 5 imagens da sua pasta e renderiza de forma limpa no rodapé
 col_f1, col_f2, col_f3, col_f4, col_f5 = st.columns(5)
 for i, col in enumerate([col_f1, col_f2, col_f3, col_f4, col_f5]):
     with col:
