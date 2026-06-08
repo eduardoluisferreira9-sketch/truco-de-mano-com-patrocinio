@@ -179,6 +179,24 @@ st.markdown("""
         box-shadow: 0px 6px 15px rgba(0,0,0,0.5);
     }
     
+    /* 🔥 CORREÇÃO VISUAL PARA INPUTS DENTRO DAS MESAS ESCURAS */
+    .card-mesa div[data-baseweb="input"] {
+        background-color: #22312c !important;
+        border: 1px solid #d4af37 !important;
+        border-radius: 4px !important;
+    }
+    .card-mesa input {
+        color: #ffffff !important;
+        font-weight: bold !important;
+    }
+    .card-mesa label {
+        color: #a0c0b5 !important;
+        font-size: 0.9rem !important;
+    }
+    .card-mesa button[pills="true"] {
+        color: #ffffff !important;
+    }
+    
     .texto-confronto {
         font-size: 1.15rem !important;
         font-weight: bold !important;
@@ -441,7 +459,7 @@ else:
                 
         st.markdown('</div>', unsafe_allow_html=True)
         
-        # Botões de controle de tempo exclusivos do Administrador (ficam logo abaixo da caixa do cronômetro)
+        # Botões de controle de tempo exclusivos do Administrador
         if is_admin:
             if st.session_state.cronometro_ativo and st.session_state.hora_inicio_rodada:
                 c_c1, c_c2 = st.columns(2)
