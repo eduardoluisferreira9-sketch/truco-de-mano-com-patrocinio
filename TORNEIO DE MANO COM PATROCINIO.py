@@ -347,48 +347,73 @@ def salvar_mudanca_retroativa(r_alvo, m_id, j1, j2):
     reconstruir_classificacao_global()
 
 # --- CARDS DINÂMICOS DE MESA COM STATUS COLORIDO (PLANTA BAIXA PREMIUM) ---
-def desenhar_mesa_planta_baixa(j1, j2, mesa_num, s1, t1, f1, s2, t2, f2, is_final=False):
-    # Lógica de Cor baseada no Status do Jogo
-    if is_final:
-        borda_cor = "#ffb703" # Dourado para finais
+def desenhar_mesa_planta_baixa(j1, j2, mesa_num, s1, t1, f1, s2, t2, f2, tipo_jogo="normal"):
+    # Estilização estendida para super-destaque das finais no Telão
+    animacao_css = ""
+    if tipo_jogo == "final":
+        borda_cor = "#ffb703" 
         bg_topo = "linear-gradient(135deg, #ffb703, #b8860b)"
         texto_topo = "#000000"
+        tag_titulo = "👑 GRANDE FINAL ABSOLUTA 👑"
+        card_height = "420px"
+        fonte_jogadores = "1.5rem"
+        animacao_css = "animation: pulsarFinal 2s infinite ease-in-out;"
+    elif tipo_jogo == "3place":
+        borda_cor = "#cd7f32" 
+        bg_topo = "linear-gradient(135deg, #cd7f32, #8b5a2b)"
+        texto_topo = "#ffffff"
+        tag_titulo = "🥉 DISPUTA DE 3º LUGAR 🥉"
+        card_height = "400px"
+        fonte_jogadores = "1.3rem"
     elif (s1 == 2 or s2 == 2):
-        borda_cor = "#2b8a3e" # Verde para Concluído
+        borda_cor = "#2b8a3e" 
         bg_topo = "#124027"
         texto_topo = "#ffffff"
+        tag_titulo = f"🎰 MESA {mesa_num} (CONCLUÍDO)"
+        card_height = "350px"
+        fonte_jogadores = "1.1rem"
     else:
-        borda_cor = "#e67e22" # Laranja para Jogo em Andamento
+        borda_cor = "#e67e22" 
         bg_topo = "#2c1e11"
         texto_topo = "#ffffff"
+        tag_titulo = f"🎰 MESA {mesa_num}"
+        card_height = "350px"
+        fonte_jogadores = "1.1rem"
 
     html_mesa = f"""
-    <div style="background: linear-gradient(135deg, #0f2d1b, #06170d); border: 3px solid {borda_cor}; border-radius: 20px; padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; position: relative; box-shadow: 0px 8px 16px rgba(0,0,0,0.5); height: 350px; box-sizing: border-box; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; margin-bottom: 5px;">
+    <style>
+    @keyframes pulsarFinal {{
+        0% {{ box-shadow: 0px 0px 15px rgba(255,183,3,0.5); border-color: #ffb703; }}
+        50% {{ box-shadow: 0px 0px 35px rgba(255,183,3,1); border-color: #ffffff; }}
+        100% {{ box-shadow: 0px 0px 15px rgba(255,183,3,0.5); border-color: #ffb703; }}
+    }}
+    </style>
+    <div style="background: linear-gradient(135deg, #0f2d1b, #06170d); border: 4px solid {borda_cor}; border-radius: 20px; padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; position: relative; box-shadow: 0px 8px 16px rgba(0,0,0,0.5); height: {card_height}; box-sizing: border-box; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; margin-bottom: 5px; {animacao_css}">
         
         <div style="text-align: center; width: 100%;">
             <div style="font-size: 0.75rem; color: #a3c7b4; font-weight: bold; text-transform: uppercase;">🧔 Jogador 1</div>
-            <div style="background: #04120a; color: #ffffff; padding: 6px 15px; border-radius: 8px; font-size: 1.1rem; font-weight: bold; display: inline-block; border: 1px solid #ffb703; max-width: 85%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{j1}</div>
+            <div style="background: #04120a; color: #ffffff; padding: 6px 15px; border-radius: 8px; font-size: {fonte_jogadores}; font-weight: 900; display: inline-block; border: 1px solid #ffb703; max-width: 85%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{j1}</div>
         </div>
         
         <div style="background-color: #04120a; border: 2px solid {borda_cor}; border-radius: 12px; padding: 10px; width: 90%; text-align: center; box-shadow: inset 0 2px 5px rgba(0,0,0,0.6);">
-            <div style="background: {bg_topo}; color: {texto_topo}; font-size: 0.8rem; font-weight: 900; padding: 3px 0; border-radius: 6px; letter-spacing: 1.5px; text-transform: uppercase;">🎰 MESA {mesa_num}</div>
-            <div style="display: flex; justify-content: space-around; align-items: center; font-size: 1.8rem; font-weight: 900; margin-top: 8px;">
-                <div style="color: #ffb703;">{int(s1)}<span style="font-size:1rem; color:#a3c7b4;">s</span> {int(t1)}<span style="font-size:1rem; color:#a3c7b4;">t</span></div>
-                <div style="font-size: 0.85rem; color: #a3c7b4; font-weight: bold;">X</div>
-                <div style="color: #ffffff;">{int(s2)}<span style="font-size:1rem; color:#a3c7b4;">s</span> {int(t2)}<span style="font-size:1rem; color:#a3c7b4;">t</span></div>
+            <div style="background: {bg_topo}; color: {texto_topo}; font-size: 0.9rem; font-weight: 900; padding: 5px 0; border-radius: 6px; letter-spacing: 1.5px; text-transform: uppercase;">{tag_titulo}</div>
+            <div style="display: flex; justify-content: space-around; align-items: center; font-size: 2.2rem; font-weight: 900; margin-top: 8px;">
+                <div style="color: #ffb703;">{int(s1)}<span style="font-size:1.2rem; color:#a3c7b4;">s</span> {int(t1)}<span style="font-size:1.2rem; color:#a3c7b4;">t</span></div>
+                <div style="font-size: 1rem; color: #a3c7b4; font-weight: bold;">X</div>
+                <div style="color: #ffffff;">{int(s2)}<span style="font-size:1.2rem; color:#a3c7b4;">s</span> {int(t2)}<span style="font-size:1.2rem; color:#a3c7b4;">t</span></div>
             </div>
-            <div style="margin-top: 6px; font-size: 0.85rem; color: #ff69b4; font-weight: bold;">
+            <div style="margin-top: 6px; font-size: 0.95rem; color: #ff69b4; font-weight: bold;">
                 🌸 {int(f1)} fl. <span style="color:#ffb703; margin:0 5px;">|</span> 🌸 {int(f2)} fl.
             </div>
         </div>
         
         <div style="text-align: center; width: 100%;">
-            <div style="background: #04120a; color: #ffffff; padding: 6px 15px; border-radius: 8px; font-size: 1.1rem; font-weight: bold; display: inline-block; border: 1px solid #ffb703; max-width: 85%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{j2}</div>
+            <div style="background: #04120a; color: #ffffff; padding: 6px 15px; border-radius: 8px; font-size: {fonte_jogadores}; font-weight: 900; display: inline-block; border: 1px solid #ffb703; max-width: 85%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{j2}</div>
             <div style="font-size: 0.75rem; color: #a3c7b4; font-weight: bold; text-transform: uppercase; margin-top: 2px;">🧔 Jogador 2</div>
         </div>
     </div>
     """
-    components.html(html_mesa, height=365, scrolling=False)
+    components.html(html_mesa, height=int(card_height.replace("px","")) + 15, scrolling=False)
 
 # --- CONFIGURAÇÃO DO FORMULÁRIO DO PAINEL DE CONTROLE DE ENTRADAS ---
 def renderizar_formulario_mesa_admin(m, j1, j2, sem_id):
@@ -487,15 +512,27 @@ if modo_exibicao == "🖥️ MODO TELÃO DE PROJETOR (Automático)":
                     col_alvo = grid_telao[(cont_m - 1) % 3]
                     p = st.session_state["placares_rodada_atual"].get(str(cont_m), [0,0,0,0,0,0,False])
                     with col_alvo:
-                        desenhar_mesa_planta_baixa(j1, j2, str(cont_m), p[0], p[2], p[4], p[1], p[3], p[5])
+                        desenhar_mesa_planta_baixa(j1, j2, str(cont_m), p[0], p[2], p[4], p[1], p[3], p[5], tipo_jogo="normal")
                     cont_m += 1
         else:
-            grid_telao = st.columns(2)
-            for c in st.session_state["confrontos_mm"]:
-                col_alvo = grid_telao[(int(c["id_original"]) - 1) % 2]
-                p = st.session_state["placares_rodada_atual"].get(c["id_original"], [0,0,0,0,0,0,False])
-                with col_alvo:
-                    desenhar_mesa_planta_baixa(c["j1"], c["j2"], c["id_original"], p[0], p[2], p[4], p[1], p[3], p[5], is_final=(c["tipo"]=="final"))
+            # SE FOR FINAIS/DISPUTA DE TERCEIRO, A ENFÁSE É ABSOLUTA E CENTRALIZADA
+            if st.session_state["fase_matamata"] == "FINAL E TERCEIRO":
+                col_f1, col_f2 = st.columns(2)
+                for c in st.session_state["confrontos_mm"]:
+                    p = st.session_state["placares_rodada_atual"].get(c["id_original"], [0,0,0,0,0,0,False])
+                    if c["tipo"] == "final":
+                        with col_f1:
+                            desenhar_mesa_planta_baixa(c["j1"], c["j2"], c["id_original"], p[0], p[2], p[4], p[1], p[3], p[5], tipo_jogo="final")
+                    elif c["tipo"] == "3place":
+                        with col_f2:
+                            desenhar_mesa_planta_baixa(c["j1"], c["j2"], c["id_original"], p[0], p[2], p[4], p[1], p[3], p[5], tipo_jogo="3place")
+            else:
+                grid_telao = st.columns(2)
+                for c in st.session_state["confrontos_mm"]:
+                    col_alvo = grid_telao[(int(c["id_original"]) - 1) % 2]
+                    p = st.session_state["placares_rodada_atual"].get(c["id_original"], [0,0,0,0,0,0,False])
+                    with col_alvo:
+                        desenhar_mesa_planta_baixa(c["j1"], c["j2"], c["id_original"], p[0], p[2], p[4], p[1], p[3], p[5], tipo_jogo="normal")
     else:
         st.info("Aguardando o início do torneio pela arbitragem para projetar as chaves.")
         
@@ -624,7 +661,8 @@ else:
                     </div>
                 </div>
                 """
-                st.components.html(html_iframe_podio, height=350)
+                # FIX DO COMPONENT: Trocado st.components por components puro
+                components.html(html_iframe_podio, height=350)
                 
                 if is_admin and st.button("💾 Imortalizar Resultados na Galeria Histórica"):
                     novo_registro = {"Data": datetime.now().strftime("%d/%m/%Y"), "Torneio": st.session_state.get("nome_torneio", "Torneio de Truco"), "Campeao": champ, "Vice": vice, "Terceiro": third, "Quarto": fourth, "ReiDaFlor": f"{rei_flor_nome} ({rei_flor_val} fl.)"}
@@ -661,9 +699,9 @@ else:
                             
                             if is_admin:
                                 col_painel, col_entradas = st.columns([45, 55])
-                                with col_painel: desenhar_mesa_planta_baixa(j1, j2, m, p[0], p[2], p[4], p[1], p[3], p[5])
+                                with col_painel: desenhar_mesa_planta_baixa(j1, j2, m, p[0], p[2], p[4], p[1], p[3], p[5], tipo_jogo="normal")
                                 with col_entradas: renderizar_formulario_mesa_admin(m, j1, j2, sem_id)
-                            else: desenhar_mesa_planta_baixa(j1, j2, m, p[0], p[2], p[4], p[1], p[3], p[5])
+                            else: desenhar_mesa_planta_baixa(j1, j2, m, p[0], p[2], p[4], p[1], p[3], p[5], tipo_jogo="normal")
                             cont += 1
                     
                     if is_admin:
@@ -702,9 +740,9 @@ else:
                         st.markdown(f'<div class="titulo-mesa-destaque">{st.session_state["fase_matamata"]} - MESA {m}</div>', unsafe_allow_html=True)
                         if is_admin:
                             col_p_mm, col_e_mm = st.columns([45, 55])
-                            with col_p_mm: desenhar_mesa_planta_baixa(j1, j2, m, p[0], p[2], p[4], p[1], p[3], p[5], is_final=(c["tipo"]=="final"))
+                            with col_p_mm: desenhar_mesa_planta_baixa(j1, j2, m, p[0], p[2], p[4], p[1], p[3], p[5], tipo_jogo=c["tipo"])
                             with col_e_mm: renderizar_formulario_mesa_admin(m, j1, j2, sem_id)
-                        else: desenhar_mesa_planta_baixa(j1, j2, m, p[0], p[2], p[4], p[1], p[3], p[5], is_final=(c["tipo"]=="final"))
+                        else: desenhar_mesa_planta_baixa(j1, j2, m, p[0], p[2], p[4], p[1], p[3], p[5], tipo_jogo=c["tipo"])
 
                     if is_admin:
                         if st.button("🏆 Validar e Avançar Playoffs", type="primary"):
