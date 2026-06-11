@@ -348,7 +348,6 @@ def salvar_mudanca_retroativa(r_alvo, m_id, j1, j2):
 
 # --- CARDS DINÂMICOS DE MESA COM STATUS COLORIDO (PLANTA BAIXA PREMIUM) ---
 def desenhar_mesa_planta_baixa(j1, j2, mesa_num, s1, t1, f1, s2, t2, f2, tipo_jogo="normal"):
-    # Estilização estendida para super-destaque das finais no Telão
     animacao_css = ""
     if tipo_jogo == "final":
         borda_cor = "#ffb703" 
@@ -486,9 +485,6 @@ st.markdown(f"<h1 style='text-align:center; color:#ffb703; font-weight:900; marg
 modo_exibicao = st.radio("Selecione o Modo de Visualização da Tela:", ["Arena de Gerenciamento", "🖥️ MODO TELÃO DE PROJETOR (Automático)"], horizontal=True)
 
 if modo_exibicao == "🖥️ MODO TELÃO DE PROJETOR (Automático)":
-    # -----------------------------------------------------------------
-    # RENDERIZAÇÃO EXCLUSIVA DO MODO TELÃO GIGANTE PARA PROJETORES/TVS
-    # -----------------------------------------------------------------
     st.markdown("<h2 style='text-align:center; color:#ffb703; margin-bottom:20px;'>📺 QUADRO OFICIAL DE CONFRONTOS</h2>", unsafe_allow_html=True)
     
     # 1. Cronômetro Gigante Centralizado
@@ -515,7 +511,6 @@ if modo_exibicao == "🖥️ MODO TELÃO DE PROJETOR (Automático)":
                         desenhar_mesa_planta_baixa(j1, j2, str(cont_m), p[0], p[2], p[4], p[1], p[3], p[5], tipo_jogo="normal")
                     cont_m += 1
         else:
-            # SE FOR FINAIS/DISPUTA DE TERCEIRO, A ENFÁSE É ABSOLUTA E CENTRALIZADA
             if st.session_state["fase_matamata"] == "FINAL E TERCEIRO":
                 col_f1, col_f2 = st.columns(2)
                 for c in st.session_state["confrontos_mm"]:
@@ -536,13 +531,9 @@ if modo_exibicao == "🖥️ MODO TELÃO DE PROJETOR (Automático)":
     else:
         st.info("Aguardando o início do torneio pela arbitragem para projetar as chaves.")
         
-    # Auto-refresh suave do telão a cada 10 segundos
     components.html("<script>setTimeout(function(){ window.parent.location.reload(); }, 10000);</script>", height=0)
 
 else:
-    # -----------------------------------------------------------------
-    # MODO TRADICIONAL DE GESTÃO E INTERAÇÃO EM ABAS
-    # -----------------------------------------------------------------
     aba_arena, aba_tabela, aba_historico = st.tabs(["⚔️ Arena de Confrontos", "📊 Classificação & Auditoria", "📜 Galeria de Campeões"])
 
     with aba_arena:
@@ -597,7 +588,6 @@ else:
                     st.session_state["torneio_iniciado"] = True
                     gerar_rodada_web(); st.rerun()
         else:
-            # Painel Superior de Destaques e Métricas Estatísticas
             c_m1, c_m2, c_m3 = st.columns(3)
             with c_m1: st.markdown(f'<div class="metric-panel"><div class="metric-val">{len(st.session_state["jogadores"])}</div><div class="metric-lbl">Inscritos na Arena</div></div>', unsafe_allow_html=True)
             with c_m2:
@@ -610,9 +600,6 @@ else:
             if st.session_state["campeao"]:
                 st.markdown("<h1 style='text-align:center; color:#ffb703 !important; font-weight:900; letter-spacing:2px; margin-top:20px;'>🏆 CERIMÔNIA DE PREMIAÇÃO FINAL</h1>", unsafe_allow_html=True)
                 
-                # -----------------------------------------------------------------
-                # EFECTO CAMPEÃO EXCLUSIVO COM CHUVA DE CONFETES REALISTA (JS/HTML5)
-                # -----------------------------------------------------------------
                 efeito_confete_html = """
                 <canvas id="canvas-confetti" style="position:fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; z-index:9999;"></canvas>
                 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -620,9 +607,7 @@ else:
                     var duration = 15 * 1000;
                     var animationEnd = Date.now() + duration;
                     var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-
                     function randomInRange(min, max) { return Math.random() * (max - min) + min; }
-
                     var interval = setInterval(function() {
                         var timeLeft = animationEnd - Date.now();
                         if (timeLeft <= 0) { return clearInterval(interval); }
@@ -661,7 +646,7 @@ else:
                     </div>
                 </div>
                 """
-                # FIX DO COMPONENT: Trocado st.components por components puro
+                # REPARADO: Chamada direta para components.html sem o prefixo st. redundante
                 components.html(html_iframe_podio, height=350)
                 
                 if is_admin and st.button("💾 Imortalizar Resultados na Galeria Histórica"):
@@ -810,4 +795,30 @@ else:
             except Exception: st.info("Galeria vazia.")
         else: st.info("Nenhum torneio imortalizado ainda.")
 
-st.markdown(f'<div style="text-align: center; color: #a3c7b4 !important; font-size: 0.8rem; margin-top: 50px; font-weight: bold;">💻 Sistema desenvolvido por: {NOME_CRIADOR} © 2026</div>', unsafe_allow_html=True)
+# --- RODAPÉ INSTITUCIONAL PROFISSIONAL DE ALTO CONTRASTE ---
+st.markdown("""
+    <hr style="border: 0; border-top: 1px solid rgba(255, 183, 3, 0.3); margin-top: 60px; margin-bottom: 15px;">
+    <div style="
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        flex-wrap: wrap; 
+        padding: 10px 20px; 
+        background: linear-gradient(90deg, #04120a, #0d301b); 
+        border: 1px solid #ffb703; 
+        border-radius: 8px; 
+        font-family: system-ui, sans-serif;
+        box-shadow: 0px 4px 10px rgba(0,0,0,0.4);
+    ">
+        <div style="color: #ffffff; font-size: 0.85rem; font-weight: 500;">
+            🚀 Desenvolvido por: <span style="color: #ffb703; font-weight: bold;">Eduardo Luis Ferreira</span>
+        </div>
+        <div style="color: #a3c7b4; font-size: 0.8rem; font-weight: bold; display: flex; gap: 15px; align-items: center;">
+            <span>📦 Versão: <span style="color: #ffffff;">2.6.0-Stable</span></span>
+            <span style="color: #ffb703;">|</span>
+            <span style="color: #2b8a3e;">● Sistema Online</span>
+            <span style="color: #ffb703;">|</span>
+            <span>© 2026 Todos os Direitos Reservados</span>
+        </div>
+    </div>
+""", unsafe_allow_html=True)
