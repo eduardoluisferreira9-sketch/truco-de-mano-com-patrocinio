@@ -38,7 +38,7 @@ st.markdown("""
     
     h1, h2, h3, h4, h5, p, label, .stText, [data-testid="stMarkdownContainer"] p { 
         color: #ffffff !important; 
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
     }
     
     .titulo-passo-admin {
@@ -76,14 +76,14 @@ st.markdown("""
     }
     
     div[data-testid="stNumberInput"] label, div[data-testid="stTextInput"] label {
-        color: #a3c7b4 !important;
+        color: #69db7c !important; /* Verde Menta Fluorescente para total leitura */
         font-size: 0.85rem !important;
         font-weight: bold !important;
         text-transform: uppercase;
     }
     
     /* Abas Customizadas */
-    button[data-baseweb="tab"] { color: #a3c7b4 !important; font-size: 1.1rem !important; }
+    button[data-baseweb="tab"] { color: #69db7c !important; font-size: 1.1rem !important; }
     button[data-baseweb="tab"][aria-selected="true"] { color: #ffb703 !important; font-weight: 900 !important; border-bottom-color: #ffb703 !important; }
     
     /* Botões */
@@ -148,7 +148,7 @@ st.markdown("""
         box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     }
     .metric-val { font-size: 2rem; font-weight: 900; color: #ffb703; }
-    .metric-lbl { font-size: 0.8rem; text-transform: uppercase; color: #a3c7b4; font-weight: bold; letter-spacing: 1px; }
+    .metric-lbl { font-size: 0.8rem; text-transform: uppercase; color: #69db7c; font-weight: bold; letter-spacing: 1px; }
 
     /* TABELAS */
     div[data-testid="stTable"] { background-color: #071c11 !important; border-radius: 10px; overflow: hidden; border: 2px solid #ffb703 !important; }
@@ -390,16 +390,16 @@ def desenhar_mesa_planta_baixa(j1, j2, mesa_num, s1, t1, f1, s2, t2, f2, tipo_jo
     <div style="background: linear-gradient(135deg, #0f2d1b, #06170d); border: 4px solid {borda_cor}; border-radius: 20px; padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; position: relative; box-shadow: 0px 8px 16px rgba(0,0,0,0.5); height: {card_height}; box-sizing: border-box; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; margin-bottom: 5px; {animacao_css}">
         
         <div style="text-align: center; width: 100%;">
-            <div style="font-size: 0.75rem; color: #a3c7b4; font-weight: bold; text-transform: uppercase;">🧔 Jogador 1</div>
+            <div style="font-size: 0.75rem; color: #69db7c; font-weight: bold; text-transform: uppercase;">🧔 Jogador 1</div>
             <div style="background: #04120a; color: #ffffff; padding: 6px 15px; border-radius: 8px; font-size: {fonte_jogadores}; font-weight: 900; display: inline-block; border: 1px solid #ffb703; max-width: 85%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{j1}</div>
         </div>
         
         <div style="background-color: #04120a; border: 2px solid {borda_cor}; border-radius: 12px; padding: 10px; width: 90%; text-align: center; box-shadow: inset 0 2px 5px rgba(0,0,0,0.6);">
             <div style="background: {bg_topo}; color: {texto_topo}; font-size: 0.9rem; font-weight: 900; padding: 5px 0; border-radius: 6px; letter-spacing: 1.5px; text-transform: uppercase;">{tag_titulo}</div>
             <div style="display: flex; justify-content: space-around; align-items: center; font-size: 2.2rem; font-weight: 900; margin-top: 8px;">
-                <div style="color: #ffb703;">{int(s1)}<span style="font-size:1.2rem; color:#a3c7b4;">s</span> {int(t1)}<span style="font-size:1.2rem; color:#a3c7b4;">t</span></div>
-                <div style="font-size: 1rem; color: #a3c7b4; font-weight: bold;">X</div>
-                <div style="color: #ffffff;">{int(s2)}<span style="font-size:1.2rem; color:#a3c7b4;">s</span> {int(t2)}<span style="font-size:1.2rem; color:#a3c7b4;">t</span></div>
+                <div style="color: #ffb703;">{int(s1)}<span style="font-size:1.2rem; color:#69db7c;">s</span> {int(t1)}<span style="font-size:1.2rem; color:#69db7c;">t</span></div>
+                <div style="font-size: 1rem; color: #69db7c; font-weight: bold;">X</div>
+                <div style="color: #ffffff;">{int(s2)}<span style="font-size:1.2rem; color:#69db7c;">s</span> {int(t2)}<span style="font-size:1.2rem; color:#69db7c;">t</span></div>
             </div>
             <div style="margin-top: 6px; font-size: 0.95rem; color: #ff69b4; font-weight: bold;">
                 🌸 {int(f1)} fl. <span style="color:#ffb703; margin:0 5px;">|</span> 🌸 {int(f2)} fl.
@@ -408,7 +408,7 @@ def desenhar_mesa_planta_baixa(j1, j2, mesa_num, s1, t1, f1, s2, t2, f2, tipo_jo
         
         <div style="text-align: center; width: 100%;">
             <div style="background: #04120a; color: #ffffff; padding: 6px 15px; border-radius: 8px; font-size: {fonte_jogadores}; font-weight: 900; display: inline-block; border: 1px solid #ffb703; max-width: 85%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{j2}</div>
-            <div style="font-size: 0.75rem; color: #a3c7b4; font-weight: bold; text-transform: uppercase; margin-top: 2px;">🧔 Jogador 2</div>
+            <div style="font-size: 0.75rem; color: #69db7c; font-weight: bold; text-transform: uppercase; margin-top: 2px;">🧔 Jogador 2</div>
         </div>
     </div>
     """
@@ -646,7 +646,6 @@ else:
                     </div>
                 </div>
                 """
-                # REPARADO: Chamada direta para components.html sem o prefixo st. redundante
                 components.html(html_iframe_podio, height=350)
                 
                 if is_admin and st.button("💾 Imortalizar Resultados na Galeria Histórica"):
@@ -787,38 +786,38 @@ else:
                 for reg in reversed(dg):
                     st.markdown(f"""
                         <div style="background: linear-gradient(135deg, #0d301b, #04120a); border: 2px solid #ffb703; border-radius: 12px; padding: 15px; margin-bottom: 15px;">
-                            <b style="color:#ffb703;">🏆 {reg.get('Torneio')}</b> <span style="float:right; color:#a3c7b4;">📅 {reg.get('Data')}</span><br>
-                            🥇 Campeão: {reg.get('Campeao')} | 🥈 Vice: {reg.get('Vice')}<br>
-                            <span style="color:#ff69b4;">🌸 Maior Cantador de Flor: {reg.get('ReiDaFlor')}</span>
+                            <b style="color:#ffb703;">🏆 {reg.get('Torneio')}</b> <span style="float:right; color:#69db7c;">📅 {reg.get('Data')}</span><br>
+                            <span style="color:#ffffff;">🥇 Campeão: {reg.get('Campeao')} | 🥈 Vice: {reg.get('Vice')}</span><br>
+                            <span style="color:#ff69b4; font-weight:bold;">🌸 Maior Cantador de Flor: {reg.get('ReiDaFlor')}</span>
                         </div>
                     """, unsafe_allow_html=True)
             except Exception: st.info("Galeria vazia.")
         else: st.info("Nenhum torneio imortalizado ainda.")
 
-# --- RODAPÉ INSTITUCIONAL PROFISSIONAL DE ALTO CONTRASTE ---
+# --- RODAPÉ INSTITUCIONAL PROFISSIONAL DE ULTRA CONTRASTE (SEM CINZA) ---
 st.markdown("""
-    <hr style="border: 0; border-top: 1px solid rgba(255, 183, 3, 0.3); margin-top: 60px; margin-bottom: 15px;">
+    <hr style="border: 0; border-top: 1px solid rgba(255, 183, 3, 0.4); margin-top: 60px; margin-bottom: 15px;">
     <div style="
         display: flex; 
         justify-content: space-between; 
         align-items: center; 
         flex-wrap: wrap; 
-        padding: 10px 20px; 
-        background: linear-gradient(90deg, #04120a, #0d301b); 
-        border: 1px solid #ffb703; 
-        border-radius: 8px; 
+        padding: 12px 20px; 
+        background: linear-gradient(90deg, #04120a, #0b2b18); 
+        border: 2px solid #ffb703; 
+        border-radius: 10px; 
         font-family: system-ui, sans-serif;
-        box-shadow: 0px 4px 10px rgba(0,0,0,0.4);
+        box-shadow: 0px 6px 15px rgba(0,0,0,0.5);
     ">
-        <div style="color: #ffffff; font-size: 0.85rem; font-weight: 500;">
-            🚀 Desenvolvido por: <span style="color: #ffb703; font-weight: bold;">Eduardo Luis Ferreira</span>
+        <div style="color: #ffffff; font-size: 0.9rem; font-weight: bold; text-shadow: 1px 1px 2px #000;">
+            🚀 Desenvolvido por: <span style="color: #ffb703; font-weight: 900; letter-spacing: 0.5px;">Eduardo Luis Ferreira</span>
         </div>
-        <div style="color: #a3c7b4; font-size: 0.8rem; font-weight: bold; display: flex; gap: 15px; align-items: center;">
-            <span>📦 Versão: <span style="color: #ffffff;">2.6.0-Stable</span></span>
-            <span style="color: #ffb703;">|</span>
-            <span style="color: #2b8a3e;">● Sistema Online</span>
-            <span style="color: #ffb703;">|</span>
-            <span>© 2026 Todos os Direitos Reservados</span>
+        <div style="color: #ffffff; font-size: 0.85rem; font-weight: bold; display: flex; gap: 15px; align-items: center; text-shadow: 1px 1px 2px #000;">
+            <span>📦 Versão: <span style="color: #ffb703; font-weight: 900;">2.6.0-Stable</span></span>
+            <span style="color: #ffb703; font-weight: 900;">|</span>
+            <span style="color: #69db7c; font-weight: 900; display: inline-flex; align-items: center; gap: 4px;">🟢 Sistema Online</span>
+            <span style="color: #ffb703; font-weight: 900;">|</span>
+            <span style="color: #ffffff; font-weight: bold;">© 2026 Todos os Direitos Reservados</span>
         </div>
     </div>
 """, unsafe_allow_html=True)
