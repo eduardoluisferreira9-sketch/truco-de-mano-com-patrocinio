@@ -134,7 +134,8 @@ valores_padrao = {
     "salvo_na_galeria": False,
     "historico_confrontos_diretos": [],
     "resultados_salvos_rodada": {},
-    "modo_telao": False
+    "modo_telao": False,
+    "admin_logado": False
 }
 
 for chave, valor in valores_padrao.items():
@@ -148,7 +149,7 @@ if os.path.exists(ARQUIVO_BACKUP):
 if st.session_state.cronometro_ativo and st.session_state.hora_inicio_rodada:
     st.fragment(run_every=1.0)(lambda: None)()
 
-# --- CALCULO DO TEMPO ADIANTADO PARA ESTILIZAÇÃO ---
+# --- CÁLCULO DO TEMPO ADIANTADO PARA ESTILIZAÇÃO ---
 avisar_fim_tempo = False
 minutos, segundos = 45, 0
 if st.session_state.cronometro_ativo and st.session_state.hora_inicio_rodada:
@@ -169,7 +170,7 @@ tamanho_fonte_mesa = "2rem" if st.session_state.modo_telao else "1.3rem"
 
 st.markdown(f"""
     <style>
-    @keyframes pulsar Vermelho {{
+    @keyframes pulsarVermelho {{
         0% {{ border-color: #d4af37; box-shadow: 0 0 5px #d4af37; }}
         50% {{ border-color: #ff4b4b; box-shadow: 0 0 20px #ff4b4b; }}
         100% {{ border-color: #d4af37; box-shadow: 0 0 5px #d4af37; }}
@@ -215,18 +216,31 @@ def obter_ip_da_rede():
 
 url_oficial = obter_ip_da_rede()
 
-# --- CONTROLE DE ACESSO E SIDEBAR ---
+# --- CONTROLE DE ACESSO E SIDEBAR (CORRIGIDO) ---
 st.sidebar.markdown("### 🔐 Controle de Acesso")
-senha_inserida = st.sidebar.text_input("Chave do Operador:", type="password")
-is_admin = (senha_inserida == CHAVE_ADMINISTRADOR)
 
-# Toggle Interativo para o Modo Telão
+if not st.session_state.admin_logado:
+    senha_inserida = st.sidebar.text_input("Chave do Operador:", type="password", key="campo_senha")
+    if st.sidebar.button("🔑 Entrar"):
+        if senha_inserida == CHAVE_ADMINISTRADOR:
+            st.session_state.admin_logado = True
+            st.rerun()
+        else:
+            st.sidebar.error("❌ Senha Incorreta!")
+else:
+    if st.sidebar.button("🚪 Sair do Modo Adm"):
+        st.session_state.admin_logado = False
+        st.rerun()
+
+is_admin = st.session_state.admin_logado
+
+# --- CONFIGURAÇÕES DE TELA ---
 st.sidebar.markdown("---")
 st.sidebar.markdown("### 📺 Configurações de Tela")
 st.session_state.modo_telao = st.sidebar.checkbox("Ativar Modo Telão (TV/Projetor)", value=st.session_state.modo_telao)
 
 if is_admin:
-    st.sidebar.success("⚡ Modo Administrador Ativo")
+    st.sidebar.success("⚡ Modo Administrator Ativo")
     st.sidebar.markdown("---")
     st.sidebar.markdown("### 🌐 Link de Acesso Público")
     url_torneio = st.sidebar.text_input("Link Atual:", value=st.session_state.get("url_override", url_oficial))
@@ -400,7 +414,7 @@ else:
     
     # --- TORNEIO CONCLUÍDO (TELA DE PREMIAÇÃO) ---
     if st.session_state.campeao:
-        st.balloons() # Chuva de balões festiva!
+        st.balloons()
         st.markdown("<h2 style='text-align: center; color: #d4af37 !important; font-size: 2.5rem;'>✨ CERIMÔNIA DE PREMIAÇÃO FINAL ✨</h2>", unsafe_allow_html=True)
         rei_das_flores = st.session_state.classificacao.sort_values(by='Flores', ascending=False).index[0]
         max_flores = int(st.session_state.classificacao.loc[rei_das_flores, 'Flores'])
@@ -433,7 +447,6 @@ else:
     elif st.session_state.em_matamata:
         st.markdown(f"<h3 style='text-align: center; color: #d4af37 !important;'>⚡ FASE ATUAL: {st.session_state.fase_matamata} ⚡</h3>", unsafe_allow_html=True)
         
-        # RENDERIZAÇÃO DO PLACAR ELETRÔNICO GIGANTE
         if st.session_state.cronometro_ativo and st.session_state.hora_inicio_rodada:
             if minutos == 0 and segundos == 0:
                 st.markdown(f'<div class="{classe_cronometro}"><h1 style="margin:0; font-size: 3.5rem; color:#ff4b4b !important;">⏰ TEMPO ESGOTADO!</h1></div>', unsafe_allow_html=True)
@@ -465,7 +478,6 @@ else:
             with st.form(key=f"mm_form_{st.session_state.fase_matamata}"):
                 resultados_fase = []
                 
-                # Renderização em Grid de 2 colunas para o administrador preencher rápido
                 for idx, confronto in enumerate(st.session_state.confrontos_mm):
                     j1, j2 = confronto["j1"], confronto["j2"]
                     texto_mesa = "🏆 GRANDE FINAL" if st.session_state.fase_matamata == "FINAIS" and not confronto.get("tipo") == "bronze" else ("🥉 DISPUTA DO 3º LUGAR" if confronto.get("tipo") == "bronze" else f"Mesa {idx+1}")
@@ -527,7 +539,6 @@ else:
                         salvar_estado_no_disco()
                         st.rerun()
         else:
-            # Renderização das Mesas em Grid Responsivo de 2 Colunas para o Público/Telão
             cols_mesas = st.columns(2)
             for idx, c in enumerate(st.session_state.confrontos_mm):
                 lbl = "🏆 Grande Final" if c["tipo"] == "normal" and st.session_state.fase_matamata == "FINAIS" else ("Disputa de 3º Lugar" if c["tipo"] == "bronze" else f"Mesa {idx+1}")
@@ -539,7 +550,7 @@ else:
                         </div>
                     """, unsafe_allow_html=True)
 
-    # --- FASE CLASSIFICATÓRIA (PONTOS CORRIDOS ESTILO GRIPO) ---
+# --- FASE CLASSIFICATÓRIA ---
     else:
         tab_mesas, tab_tabela, tab_hist = st.tabs(["⚔️ Mesas da Rodada", "📊 Tabela Geral", "📜 Histórico de Jogos"])
         
@@ -547,7 +558,6 @@ else:
             if st.session_state.rodada_atual <= 5:
                 st.markdown(f"<h3 style='text-align: center; color: #d4af37 !important;'>📅 ANDAMENTO: RODADA {st.session_state.rodada_atual} DE 5</h3>", unsafe_allow_html=True)
                 
-                # RENDERIZAÇÃO DO PLACAR ELETRÔNICO GIGANTE
                 if st.session_state.cronometro_ativo and st.session_state.hora_inicio_rodada:
                     if minutos == 0 and segundos == 0:
                         st.markdown(f'<div class="{classe_cronometro}"><h1 style="margin:0; font-size: 3.5rem; color:#ff4b4b !important;">⏰ TEMPO ESGOTADO!</h1></div>', unsafe_allow_html=True)
@@ -583,7 +593,6 @@ else:
                                 st.markdown(f'<div class="card-mesa-chapeu">🤠 <b>{j1}</b> foi sorteado e está no <b>CHAPÉU (Folga Garantida)</b></div>', unsafe_allow_html=True)
                                 placares.append(None)
                             else:
-                                # Identifica dinamicamente se a mesa já tem valores pré-preenchidos salvos
                                 status_estilo = "card-mesa-concluida" if f"mesa_{idx}" in st.session_state.resultados_salvos_rodada else "card-mesa-pendente"
                                 badge_texto = '<span class="badge-concluido">SALVO</span>' if status_estilo == "card-mesa-concluida" else ""
                                 
@@ -601,7 +610,6 @@ else:
                                     f2 = st.number_input("Flores:", 0, 20, 0, key=f"f2_{idx}")
                                 placares.append((s1, s2, t1, t2, f1, f2))
                                 
-                                # Marcar como preenchida provisoriamente se houver interação
                                 if s1 > 0 or s2 > 0 or t1 > 0 or t2 > 0:
                                     st.session_state.resultados_salvos_rodada[f"mesa_{idx}"] = True
                         
@@ -645,7 +653,6 @@ else:
                                 salvar_estado_no_disco()
                                 st.rerun()
                 else:
-                    # Modo Público/Telão: Organização visual em Grid de 3 Colunas
                     cols_grade = st.columns(3)
                     for idx, (j1, j2) in enumerate(st.session_state.confrontos):
                         with cols_grade[idx % 3]:
@@ -673,7 +680,6 @@ else:
                         st.rerun()
 
         with tab_tabela:
-            # INTERFACE DE MÉTRICAS NO TOPO (Destaques visuais)
             df_exibir = st.session_state.classificacao.sort_values(
                 by=['Vitorias', 'Sets_Ganhos', 'Saldo_Tentos', 'Flores'], 
                 ascending=[False, False, False, False]
